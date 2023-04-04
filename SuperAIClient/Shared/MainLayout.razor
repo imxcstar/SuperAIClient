@@ -76,25 +76,7 @@
                                 <img class="avatar" src="https://ts1.cn.mm.bing.net/th/id/R-C.451eb4f3577bcb3980c9eea8f2635482?rik=Jg08MZs0aNN0mg&riu=http%3a%2f%2fm.imeitou.com%2fuploads%2fallimg%2f2018082817%2fuulzgsar5vy.jpg&ehk=Kg78F1rZG%2bwBxsyzAW%2fsZSrvUD97WDrNhwpxYWWvmOg%3d&risl=&pid=ImgRaw&r=0" alt="头像">
                                 <div class="message">
                                     <div class="message-content">
-                                        你好！有什么我可以帮你的吗？
-                                        啊实打实
-                                        去问我去饿
-                                        大概豆腐干地方
-                                        热舞特人re符合
-                                        规划结构和认为我
-                                        现场v现场v出现有什么我可以帮你的吗？
-                                        啊实打实
-                                        去问我去饿
-                                        大概豆腐干地方
-                                        热舞特人re符合
-                                        规划结构和认为我
-                                        现场v现场v出现有什么我可以帮你的吗？
-                                        啊实打实
-                                        去问我去饿
-                                        大概豆腐干地方
-                                        热舞特人re符合
-                                        规划结构和认为我
-                                        现场v现场v出现
+                                        <MMarkdownIt Source="@source2" Class="markdown-parser__basic" />
                                     </div>
                                     <span class="arrow-left"></span>
                                 </div>
@@ -129,6 +111,15 @@
                         }
                     </div>
                 </div>
+                <div class="chat-con-box">
+                    <div class="chat-input-box">
+                        <textarea class="chat-input-textarea"></textarea>
+                        <svg class="chat-input-send-btn" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M22 2L11 13" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                            <path d="M22 2L15 22L11 13L2 9L22 2Z" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                        </svg>
+                    </div>
+                </div>
             </div>
         </div>
     </MMain>
@@ -152,6 +143,13 @@ Depending on the application you use, you may not be able to preview the formatt
 
 > The overriding design goal for Markdown’s formatting syntax is to make it as readable as possible. The idea is that a Markdown-formatted document should be publishable as-is, as plain text, without looking like it’s been marked up with tags or formatting instructions.";
 
+    private string source2 = @"
+The quadratic formula is given by:
+
+$$x = \frac{-b \pm \sqrt{b^2 - 4ac}}{2a}$$
+
+where $a$, $b$, and $c$ are constants, and $x$ is the variable being solved for.
+";
 
     private StringNumber _selectedItem = 1;
     private Item[] _items = new Item[]

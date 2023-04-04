@@ -26,6 +26,8 @@
     min-width: 498px;
     min-height: 320px;
     padding: 15px;
+    display: flex;
+    flex-direction: column;
 }
 
 .msg-box {
@@ -168,9 +170,9 @@
     pointer-events: none;
 }
 
-    .model-select::-ms-expand {
-        display: none;
-    }
+.model-select::-ms-expand {
+    display: none;
+}
 
 .msg-item {
     position: relative;
@@ -210,6 +212,13 @@
     overflow: auto;
     overflow-x: hidden;
     padding: 5px;
+    padding-bottom: 5%;
+}
+
+@media screen and (max-width: 768px) {
+    .chat-container {
+        padding-bottom: 10%;
+    }
 }
 
     .chat-container::-webkit-scrollbar {
@@ -282,4 +291,66 @@
 
 .message-right {
     justify-content: flex-end;
+}
+
+.chat-con-box {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+}
+
+.chat-input-box {
+    width: 30%;
+    height: 100%;
+    bottom: 100%;
+    overflow: hidden;
+    position: relative;
+    display: flex;
+    flex-direction: column-reverse;
+    padding: 10px;
+}
+
+.chat-input-textarea {
+    height: 50%;
+    width: 100%;
+    box-sizing: border-box;
+    resize: none;
+    overflow: hidden;
+    transition: height 0.3s ease;
+    border: 1px solid #BBBBBB;
+    background-color: #FFFFFF;
+    outline: none;
+    border-radius: 35px 35px 35px 35px;
+    padding: 10px 15px 10px 15px;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+
+    .chat-input-textarea:focus {
+        height: 100%;
+    }
+
+.chat-input-send-btn {
+    transition: bottom 0.3s ease;
+    display: block;
+    position: absolute;
+    bottom: 18%;
+    right: 20px;
+    cursor: pointer;
+}
+
+.chat-input-textarea:focus ~ .chat-input-send-btn {
+    display: block;
+    bottom: 40%;
+}
+
+@media screen and (max-width: 768px) {
+    .chat-input-box {
+        width: 80%;
+    }
+}
+
+@media screen and (max-width: 1600px) and (min-width: 768px) {
+    .chat-input-box {
+        width: 50%;
+    }
 }
