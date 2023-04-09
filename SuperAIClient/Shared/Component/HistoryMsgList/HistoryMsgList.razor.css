@@ -1,0 +1,56 @@
+﻿.msg-list-box {
+    height: 100%;
+    overflow: auto;
+}
+
+    .msg-list-box::-webkit-scrollbar {
+        width: 0;
+        background-color: transparent;
+    }
+
+        .msg-list-box:hover::-webkit-scrollbar,
+        .msg-list-box::-webkit-scrollbar:hover {
+            width: 8px;
+            background-color: transparent;
+        }
+
+    .msg-list-box::-webkit-scrollbar-thumb {
+        background-color: rgba(0, 0, 0, 0.1);
+        border-radius: 4px;
+    }
+
+        .msg-list-box::-webkit-scrollbar-thumb:hover {
+            background-color: rgba(0, 0, 0, 0.1);
+        }
+
+.msg-item {
+    position: relative;
+    height: 56px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    width: calc(100% - 10px);
+}
+
+    .msg-item:hover .msg-item-close-icon {
+        display: block;
+    }
+
+.msg-item-close-icon {
+    position: absolute;
+    right: 5px;
+    top: 50%;
+    transform: translateY(-50%);
+    display: none;
+    cursor: pointer;
+}
+
+.msg-item:hover {
+    background-color: #BBBBBB32;
+    border-radius: 0 35px 35px 0;
+}
+
+.msg-item-select, .msg-item:active {
+    background-color: #5a5a5a32;
+    border-radius: 0 35px 35px 0;
+}

@@ -1,202 +1,115 @@
-﻿@inherits LayoutComponentBase
+﻿@using SuperAIClient.Services.StorageService;
+@using SuperAIClient.Shared.Component.ChatMsgList
+@using SuperAIClient.Shared.Component.HeadConMenu
+@using SuperAIClient.Shared.Component.HistoryMsgList;
+@inherits LayoutComponentBase
+@inject IPopupService PopupService
+@inject IStorageService StorageService
+
 <MApp Style="height: 100%">
     <MMain Style="height: 100%">
         <div class="main">
             <div class="left-box">
-                <div class="head-con-box">
-                    <div class="head-box">
-                        <MAvatar Size="80"
-                                 Color="light-blue lighten-2">
-                            <MIcon Large>mdi-robot-confused</MIcon>
-                        </MAvatar>
-                    </div>
-                    <div class="con-box">
-                        <div class="model-select-box">
-                            <select class="model-select">
-                                <option value="gpt-4">GPT-4</option>
-                                <option value="gpt-3.5-turbo">ChatGPT</option>
-                                <option value="text-davinci-003">GPT-3.5</option>
-                                <option value="custom">自定义</option>
-                            </select>
-                        </div>
-                        <div class="progressbar-box">
-                            <div class="progressbar-box-view">
-                                <MProgressLinear Color="blue" BackgroundColor="blue lighten-4" Height="20" Rounded Value="90" Style="width: 100%"></MProgressLinear>
-                            </div>
-                            <div class="progressbar-box-value">
-                                <span class="light-blue--text text--darken-3">90%</span>
-                                <MIcon Small Color="light-blue darken-3">mdi-lightning-bolt</MIcon>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                <HeadConMenu OnNewChat="OnNewChat" OnClearChat="OnClearChat" OnSetting="OnSetting"></HeadConMenu>
                 <div class="msg-box">
-                    <div class="msg-list-box">
-                        @foreach (var item in _items)
-                        {
-                            <div class="msg-item">
-                                <div style="margin-left: 10px">
-                                    <MIcon>
-                                        @item.Icon
-                                    </MIcon>
-                                </div>
-                                <span style="margin-left: 10px">@item.Text</span>
-                                <div class="msg-item-close-icon">
-                                    <MIcon>mdi-close</MIcon>
-                                </div>
-                            </div>
-                        }
-                    </div>
+                    <HistoryMsgList Items="@_chatInfo.HistoryMsgItem" OnRemoveItem="OnRemoveHistoryMsg" OnSelectItem="OnSelectHistoryMsg" SelectId="@_chatInfo.SelectHistoryMsgId"></HistoryMsgList>
                 </div>
             </div>
             <div class="right-box">
-                <div class="chat-box">
-                    <div class="chat-container">
-                        <div class="message-wrapper message-right">
-                            <div class="message">
-                                <div class="message-content">
-                                    测试markdown
-                                </div>
-                                <span class="arrow-right"></span>
-                            </div>
-                            <img class="avatar" src="https://tse2-mm.cn.bing.net/th/id/OIP-C.Ib6SUpuCGwrKbd1s2emOAQAAAA?w=204&h=204&c=7&r=0&o=5&pid=1.7" alt="头像">
-                        </div>
-                        <div class="message-wrapper message-left">
-                            <img class="avatar" src="https://ts1.cn.mm.bing.net/th/id/R-C.451eb4f3577bcb3980c9eea8f2635482?rik=Jg08MZs0aNN0mg&riu=http%3a%2f%2fm.imeitou.com%2fuploads%2fallimg%2f2018082817%2fuulzgsar5vy.jpg&ehk=Kg78F1rZG%2bwBxsyzAW%2fsZSrvUD97WDrNhwpxYWWvmOg%3d&risl=&pid=ImgRaw&r=0" alt="头像">
-                            <div class="message">
-                                <div class="message-content">
-                                    <MMarkdownIt Source="@source" Class="markdown-parser__basic" />
-                                </div>
-                                <span class="arrow-left"></span>
-                            </div>
-                        </div>
-                        @for (int i = 0; i < 2; i++)
-                        {
-                            <div class="message-wrapper message-left">
-                                <img class="avatar" src="https://ts1.cn.mm.bing.net/th/id/R-C.451eb4f3577bcb3980c9eea8f2635482?rik=Jg08MZs0aNN0mg&riu=http%3a%2f%2fm.imeitou.com%2fuploads%2fallimg%2f2018082817%2fuulzgsar5vy.jpg&ehk=Kg78F1rZG%2bwBxsyzAW%2fsZSrvUD97WDrNhwpxYWWvmOg%3d&risl=&pid=ImgRaw&r=0" alt="头像">
-                                <div class="message">
-                                    <div class="message-content">
-                                        <MMarkdownIt Source="@source2" Class="markdown-parser__basic" />
-                                    </div>
-                                    <span class="arrow-left"></span>
-                                </div>
-                            </div>
-                            <div class="message-wrapper message-right">
-                                <div class="message">
-                                    <div class="message-content">
-                                        嗨，有什么我可以帮你的吗？你好！有什么我可以帮你的吗？
-                                        啊实打实
-                                        去问我去饿
-                                        大概豆腐干地方
-                                        热舞特人re符合
-                                        规划结构和认为我
-                                        现场v现场v出现有什么我可以帮你的吗？
-                                        啊实打实
-                                        去问我去饿
-                                        大概豆腐干地方
-                                        热舞特人re符合
-                                        规划结构和认为我
-                                        现场v现场v出现有什么我可以帮你的吗？
-                                        啊实打实
-                                        去问我去饿
-                                        大概豆腐干地方
-                                        热舞特人re符合
-                                        规划结构和认为我
-                                        现场v现场v出现
-                                    </div>
-                                    <span class="arrow-right"></span>
-                                </div>
-                                <img class="avatar" src="https://tse2-mm.cn.bing.net/th/id/OIP-C.Ib6SUpuCGwrKbd1s2emOAQAAAA?w=204&h=204&c=7&r=0&o=5&pid=1.7" alt="头像">
-                            </div>
-                        }
+                @if (_chatInfo.ChatMsgItem.ContainsKey(_chatInfo.SelectHistoryMsgId))
+                {
+                    <div class="chat-box">
+                        <ChatMsgList Items="@_chatInfo.ChatMsgItem[_chatInfo.SelectHistoryMsgId]" Style="padding-bottom: 5%;"></ChatMsgList>
                     </div>
-                </div>
-                <div class="chat-con-box">
-                    <div class="chat-input-box">
-                        <textarea class="chat-input-textarea"></textarea>
-                        <svg class="chat-input-send-btn" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M22 2L11 13" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-                            <path d="M22 2L15 22L11 13L2 9L22 2Z" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-                        </svg>
+                    <div class="chat-con-box">
+                        <div class="chat-input-box">
+                            <textarea class="chat-input-textarea"></textarea>
+                            <svg class="chat-input-send-btn" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M22 2L11 13" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                                <path d="M22 2L15 22L11 13L2 9L22 2Z" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                            </svg>
+                        </div>
                     </div>
-                </div>
+                }
             </div>
         </div>
     </MMain>
 </MApp>
 
 @code {
-    private string source = @"
-## What is Markdown?
+    private ChatInfo _chatInfo { get; set; }
 
-Markdown is a lightweight markup language that you can use to add formatting elements to plaintext text documents. Created by [John Gruber](https://daringfireball.net/projects/markdown/) in 2004, Markdown is now one of the world’s most popular markup languages.
-
-Using Markdown is different than using a [WYSIWYG](https://en.wikipedia.org/wiki/WYSIWYG) editor. In an application like Microsoft Word, you click buttons to format words and phrases, and the changes are visible immediately. Markdown isn’t like that. When you create a Markdown-formatted file, you add Markdown syntax to the text to indicate which words and phrases should look different.
-
-For example, to denote a heading, you add a number sign before it (e.g., # Heading One). Or to make a phrase bold, you add two asterisks before and after it (e.g., **this text is bold**). It may take a while to get used to seeing Markdown syntax in your text, especially if you’re accustomed to WYSIWYG applications. The screenshot below shows a Markdown file displayed in the [Visual Studio Code text editor](https://www.markdownguide.org/tools/vscode/).
-
-![markdown in vscode](https://mdg.imgix.net/assets/images/vscode.png?auto=format&fit=clip&q=40&w=1080)
-
-You can add Markdown formatting elements to a plaintext file using a text editor application. Or you can use one of the many Markdown applications for macOS, Windows, Linux, iOS, and Android operating systems. There are also several web-based applications specifically designed for writing in Markdown.
-
-Depending on the application you use, you may not be able to preview the formatted document in real time. But that’s okay. According to Gruber, Markdown syntax is designed to be readable and unobtrusive, so the text in Markdown files can be read even if it isn’t rendered.
-
-> The overriding design goal for Markdown’s formatting syntax is to make it as readable as possible. The idea is that a Markdown-formatted document should be publishable as-is, as plain text, without looking like it’s been marked up with tags or formatting instructions.";
-
-    private string source2 = @"
-The quadratic formula is given by:
-
-$$x = \frac{-b \pm \sqrt{b^2 - 4ac}}{2a}$$
-
-where $a$, $b$, and $c$ are constants, and $x$ is the variable being solved for.
-";
-
-    private StringNumber _selectedItem = 1;
-    private Item[] _items = new Item[]
+    public override Task SetParametersAsync(ParameterView parameters)
     {
-       new Item { Text= "这是一条消息", Icon= "mdi-message-outline" },
-       new Item { Text= "消息测试", Icon= "mdi-message-outline" },
-       new Item { Text= "测试测试测试测试测试测试12353454测试测试", Icon= "mdi-message-outline" },
-       new Item { Text= "测试测试", Icon= "mdi-message-outline" },
-       new Item { Text= "测试测试", Icon= "mdi-message-outline" },
-       new Item { Text= "测试测试", Icon= "mdi-message-outline" },
-       new Item { Text= "测试测试", Icon= "mdi-message-outline" },
-       new Item { Text= "测试测试", Icon= "mdi-message-outline" },
-       new Item { Text= "测试测试", Icon= "mdi-message-outline" },
-       new Item { Text= "测试测试", Icon= "mdi-message-outline" },
-       new Item { Text= "测试测试", Icon= "mdi-message-outline" },
-       new Item { Text= "测试测试", Icon= "mdi-message-outline" },
-       new Item { Text= "测试测试", Icon= "mdi-message-outline" },
-       new Item { Text= "测试测试", Icon= "mdi-message-outline" },
-       new Item { Text= "测试测试", Icon= "mdi-message-outline" },
-       new Item { Text= "测试测试", Icon= "mdi-message-outline" },
-       new Item { Text= "测试测试", Icon= "mdi-message-outline" },
-       new Item { Text= "测试测试", Icon= "mdi-message-outline" },
-       new Item { Text= "测试测试", Icon= "mdi-message-outline" },
-       new Item { Text= "测试测试", Icon= "mdi-message-outline" },
-       new Item { Text= "测试测试", Icon= "mdi-message-outline" },
-       new Item { Text= "测试测试", Icon= "mdi-message-outline" },
-       new Item { Text= "测试测试", Icon= "mdi-message-outline" },
-       new Item { Text= "测试测试", Icon= "mdi-message-outline" },
-       new Item { Text= "测试测试", Icon= "mdi-message-outline" },
-       new Item { Text= "测试测试", Icon= "mdi-message-outline" },
-       new Item { Text= "测试测试", Icon= "mdi-message-outline" },
-       new Item { Text= "测试测试", Icon= "mdi-message-outline" },
-       new Item { Text= "测试测试", Icon= "mdi-message-outline" },
-       new Item { Text= "测试测试", Icon= "mdi-message-outline" },
-       new Item { Text= "测试测试", Icon= "mdi-message-outline" },
-       new Item { Text= "测试测试", Icon= "mdi-message-outline" },
-       new Item { Text= "测试测试", Icon= "mdi-message-outline" },
-       new Item { Text= "测试测试", Icon= "mdi-message-outline" },
-       new Item { Text= "测试测试", Icon= "mdi-message-outline" },
-       new Item { Text= "测试测试", Icon= "mdi-message-outline" },
-       new Item { Text= "测试测试", Icon= "mdi-message-outline" },
-       new Item { Text= "测试测试", Icon= "mdi-message-outline" },
-    };
+        _chatInfo = new ChatInfo(StorageService);
+        return base.SetParametersAsync(parameters);
+    }
 
-    class Item
+    protected override Task OnAfterRenderAsync(bool firstRender)
     {
-        public string Text { get; set; }
-        public string Icon { get; set; }
+        return Task.Run(async () =>
+        {
+            await base.OnAfterRenderAsync(firstRender);
+            if (firstRender)
+            {
+                await _chatInfo.LoadAsync();
+                if (_chatInfo.HistoryMsgItem.Count == 0)
+                    await OnNewChat();
+                if (string.IsNullOrWhiteSpace(_chatInfo.OpenAIApiKey))
+                {
+                    var confirmed = (await PopupService.PromptAsync(
+                        "OpenAIAPIKey",
+                        "请输入OpenAI的APIKEY"
+                    ))?.Trim();
+                    if (!string.IsNullOrWhiteSpace(confirmed))
+                        _chatInfo.OpenAIApiKey = confirmed;
+                }
+                await _chatInfo.SaveAsync();
+                StateHasChanged();
+            }
+        });
+    }
+
+    public async Task OnNewChat()
+    {
+        var hmsg = _chatInfo.AddHistoryMsg("新的聊天");
+        await OnSelectHistoryMsg(hmsg);
+    }
+
+    public async Task OnClearChat()
+    {
+        _chatInfo.SelectHistoryMsgId = "";
+        _chatInfo.HistoryMsgItem.Clear();
+        _chatInfo.ChatMsgItem.Clear();
+        await _chatInfo.SaveAsync();
+    }
+
+    public async Task OnSetting()
+    {
+        var confirmed = (await PopupService.PromptAsync(
+            "OpenAIAPIKey",
+            "请输入OpenAI的APIKEY"
+        ))?.Trim();
+        if (!string.IsNullOrWhiteSpace(confirmed))
+            _chatInfo.OpenAIApiKey = confirmed;
+        await _chatInfo.SaveAsync();
+    }
+
+    public async Task OnRemoveHistoryMsg(HistoryMsgItem item)
+    {
+        if (item.Id == _chatInfo.SelectHistoryMsgId)
+            _chatInfo.SelectHistoryMsgId = "";
+        _chatInfo.ChatMsgItem.Remove(item.Id);
+        await _chatInfo.SaveAsync();
+    }
+
+    public async Task OnSelectHistoryMsg(HistoryMsgItem item)
+    {
+        _chatInfo.SelectHistoryMsgId = item.Id;
+        if (!_chatInfo.ChatMsgItem.ContainsKey(_chatInfo.SelectHistoryMsgId))
+        {
+            _chatInfo.ChatMsgItem[_chatInfo.SelectHistoryMsgId] = new List<ChatMsgItem>();
+        }
+        await _chatInfo.SaveAsync();
     }
 }

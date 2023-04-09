@@ -1,0 +1,89 @@
+﻿
+.head-con-box {
+    display: flex;
+    flex-direction: row;
+    position: relative;
+    z-index: 2;
+}
+
+.head-box {
+    border-radius: 50%;
+    width: 80px;
+    height: 80px;
+    min-width: 60px;
+    min-height: 60px;
+    background-color: white;
+    z-index: 2;
+}
+
+.con-box {
+    display: flex;
+    flex-direction: column;
+    width: calc(100% - 70px);
+    margin-left: -10px;
+}
+
+.model-select-box {
+    padding-left: 10px;
+    margin-top: 10px;
+}
+
+.progressbar-box {
+    width: 100%;
+    margin-top: 5px;
+    position: relative;
+}
+
+.progressbar-box-view {
+    width: 100%;
+}
+
+.progressbar-box-value {
+    position: absolute;
+    right: 0;
+    top: 0;
+    display: flex;
+    align-items: center;
+    z-index: 2;
+    height: 20px;
+}
+
+.model-select-box {
+    display: inline-block;
+    width: 100%;
+    max-width: 250px;
+    position: relative;
+}
+
+.model-select {
+    display: inline-block;
+    width: 100%;
+    max-width: 250px;
+    position: relative;
+    background-color: #ffffff;
+    border: none;
+    border-radius: 4px;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    font-size: 14px;
+    outline: none;
+}
+
+    .model-select:focus {
+        box-shadow: 0 0 0 0.1rem rgba(187, 187, 187, 0.25);
+    }
+
+.model-select-box:after {
+    content: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 21 21" width="21" height="21"><title>chevron-down</title><path d="M7.41,8.58L12,13.17L16.59,8.58L18,10L12,16L6,10L7.41,8.58Z"/></svg>');
+    font-size: 12px;
+    position: absolute;
+    right: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+    pointer-events: none;
+}
+
+.model-select::-ms-expand {
+    display: none;
+}

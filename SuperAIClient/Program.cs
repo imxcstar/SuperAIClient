@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using SuperAIClient;
-using SuperAIClient.Data;
+using SuperAIClient.Services.StorageService;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.RootComponents.Add<App>("#app");
@@ -19,6 +19,6 @@ builder.Services.AddMasaBlazor(builder =>
     });
 });
 builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
-builder.Services.AddSingleton<WeatherForecastService>();
+builder.Services.AddSingleton<IStorageService, JSStorageService>();
 
 await builder.Build().RunAsync();
