@@ -1,12 +1,13 @@
 ﻿using BlazorComponent.JSInterop;
 using Microsoft.JSInterop;
+using SuperAIClient.Services.StorageService;
 using System.Text.Json;
 
-namespace SuperAIClient.Services.StorageService
+namespace SuperAIClient.Interop
 {
-    public class JSStorageService : JSModule, IStorageService
+    public class JSStorageInterop : JSModule, IStorageService
     {
-        public JSStorageService(IJSRuntime js) : base(js, "./js/storage.js")
+        public JSStorageInterop(IJSRuntime js) : base(js, "./js/storageInterop.js")
         {
         }
 

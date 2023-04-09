@@ -51,7 +51,7 @@ namespace SuperAIClient.Shared
                 Id = Guid.NewGuid().ToString(),
                 Title = title
             };
-            HistoryMsgItem.Add(ret);
+            HistoryMsgItem.Insert(0, ret);
             return ret;
         }
     }

@@ -4,11 +4,10 @@
         @switch (item.UserType)
         {
             case ChatUserType.Sender:
-
-                <div class="message-wrapper message-right">
+                <div class="message-wrapper message-right" id="@item.Id">
                     <div class="message">
                         <div class="message-content">
-                            <MMarkdownIt Html="@true" Source="@item.Content" Class="markdown-parser__basic" />
+                            <MMarkdownIt Html="@true" Source="@item.Content.Replace("\n","\n\n")" Class="markdown-parser__basic" />
                         </div>
                         <span class="arrow-right"></span>
                     </div>
@@ -16,7 +15,7 @@
                 </div>
                 break;
             case ChatUserType.Receiver:
-                <div class="message-wrapper message-left">
+                <div class="message-wrapper message-left" id="@item.Id">
                     <img class="avatar" src="@item.HeadIconURL" alt="头像">
                     <div class="message">
                         <div class="message-content">
@@ -34,7 +33,10 @@
 
 @code {
     [Parameter]
-    public IList<ChatMsgItem> Items { get; set; }
+    public List<ChatMsgItem> Items { get; set; }
+
+    [Parameter]
+    public EventCallback<List<ChatMsgItem>> ItemsChanged { get; set; }
 
     [Parameter]
     public string Style { get; set; } = "";

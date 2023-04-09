@@ -1,7 +1,9 @@
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using SuperAIClient;
+using SuperAIClient.Interop;
 using SuperAIClient.Services.StorageService;
+using SuperAIClient.Services.UIService;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.RootComponents.Add<App>("#app");
@@ -19,6 +21,7 @@ builder.Services.AddMasaBlazor(builder =>
     });
 });
 builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
-builder.Services.AddSingleton<IStorageService, JSStorageService>();
+builder.Services.AddSingleton<IStorageService, JSStorageInterop>();
+builder.Services.AddSingleton<IScrollService, JSScrollInterop>();
 
 await builder.Build().RunAsync();

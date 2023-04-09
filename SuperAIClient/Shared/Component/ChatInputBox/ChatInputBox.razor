@@ -1,0 +1,40 @@
+﻿<div class="chat-input-box">
+    <div class="msg-box">
+        <textarea class="chat-input-textarea" @bind="@_msg" @bind:event="oninput" @onkeydown="OnKey" @onkeydown:preventDefault="@shouldPreventDefault"></textarea>
+    </div>
+    <div class="msg-bon-box">
+        <MButton Class="chat-input-send-btn" Icon Color="pink" OnClick="SendMsg">
+            <MIcon>mdi-send</MIcon>
+        </MButton>
+    </div>
+</div>
+
+@code {
+    private bool shouldPreventDefault = false;
+    private string _msg = "";
+
+    [Parameter]
+    public EventCallback<string> OnSendMsg { get; set; }
+
+    private async Task SendMsg()
+    {
+        if (string.IsNullOrWhiteSpace(_msg))
+            return;
+        var tmsg = _msg;
+        _msg = "";
+        await OnSendMsg.InvokeAsync(tmsg);
+    }
+
+    private async Task OnKey(KeyboardEventArgs args)
+    {
+        if (args.Code == "Enter")
+        {
+            shouldPreventDefault = true;
+            await SendMsg();
+        }
+        else
+        {
+            shouldPreventDefault = false;
+        }
+    }
+}
