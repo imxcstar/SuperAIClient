@@ -32,7 +32,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
       - name: Install DotNet 7.0 SDK
-        run: apt-get update && apt-get install -y dotnet-sdk-7.0
+        run: sudo apt-get update && sudo apt-get install -y dotnet-sdk-7.0
       - name: Install workloads
         run: dotnet workload restore ./SuperAIClient/SuperAIClient.csproj
       - name: Build publish
