@@ -3,7 +3,17 @@
 		<TargetFramework>net7.0</TargetFramework>
 		<Nullable>enable</Nullable>
 		<ImplicitUsings>enable</ImplicitUsings>
+
+		<PublishTrimmed>true</PublishTrimmed>
+		<InvariantGlobalization>true</InvariantGlobalization>
+		<BlazorEnableTimeZoneSupport>false</BlazorEnableTimeZoneSupport>
+		<EventSourceSupport>false</EventSourceSupport>
+		<HttpActivityPropagationSupport>false</HttpActivityPropagationSupport>
+		<EnableUnsafeBinaryFormatterSerialization>false</EnableUnsafeBinaryFormatterSerialization>
+		<MetadataUpdaterSupport>false</MetadataUpdaterSupport>
+		<UseNativeHttpHandler>true</UseNativeHttpHandler>
 	</PropertyGroup>
+	
 	<ItemGroup>
 		<PackageReference Include="Masa.Blazor" Version="1.0.0-preview.12" />
 		<PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="7.0.4" />
