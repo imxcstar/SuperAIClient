@@ -31,8 +31,6 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
-      - name: WorkDir
-        run: cd ./SuperAIClient
       - name: Install DotNet 7.0 SDK
         run: sudo apt-get update && sudo apt-get install -y dotnet-sdk-7.0
       - name: Install workloads And Build publish
