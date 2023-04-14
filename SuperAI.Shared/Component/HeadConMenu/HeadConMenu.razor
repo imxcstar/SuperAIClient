@@ -1,0 +1,74 @@
+﻿@using Masa.Blazor
+
+<div class="head-con-box">
+    <div class="head-box">
+        <MMenu Bottom MinWidth="200" OffsetY>
+            <ActivatorContent>
+                <MAvatar Size="80"
+                         Color="light-blue lighten-2" @attributes="@context.Attrs">
+                    <MIcon Large>mdi-robot-confused</MIcon>
+                </MAvatar>
+            </ActivatorContent>
+            <ChildContent>
+                <MCard>
+                    <MListItemContent Class="justify-center">
+                        <div class="mx-auto text-center">
+                            <MButton Depressed Rounded Text OnClick="NewChat">新建聊天</MButton>
+                            <MDivider class="my-3"></MDivider>
+                            <MButton Depressed Rounded Text OnClick="ClearChat">清空聊天</MButton>
+                            <MDivider class="my-3"></MDivider>
+                            <MButton Depressed Rounded Text OnClick="Setting">设置</MButton>
+                        </div>
+                    </MListItemContent>
+                </MCard>
+            </ChildContent>
+        </MMenu>
+    </div>
+    <div class="con-box">
+        <div class="model-select-box">
+            <select class="model-select">
+                <option value="gpt-3.5-turbo">ChatGPT</option>
+                <option value="custom" disabled>自定义</option>
+            </select>
+        </div>
+        <div class="progressbar-box">
+            <div class="progressbar-box-view">
+                <MProgressLinear Color="blue" BackgroundColor="blue lighten-4" Height="20" Rounded Value="@Balance" Style="width: 100%"></MProgressLinear>
+            </div>
+            @*<div class="progressbar-box-value">
+                <span class="light-blue--text text--darken-3">@Balance%</span>
+                <MIcon Small Color="light-blue darken-3">mdi-lightning-bolt</MIcon>
+            </div>*@
+        </div>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public int Balance { get; set; } = 100;
+
+    [Parameter]
+    public EventCallback OnNewChat { get; set; }
+
+    [Parameter]
+    public EventCallback OnClearChat { get; set; }
+
+    [Parameter]
+    public EventCallback OnSetting { get; set; }
+
+
+    private void NewChat()
+    {
+        OnNewChat.InvokeAsync();
+    }
+
+    private void ClearChat()
+    {
+        OnClearChat.InvokeAsync();
+    }
+
+    private void Setting()
+    {
+        OnSetting.InvokeAsync();
+    }
+}
