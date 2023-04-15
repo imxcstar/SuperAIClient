@@ -41,7 +41,6 @@
 </MApp>
 
 @code {
-    private ChatCompletionService _openAIChatService { get; set; }
     private ChatInfo _chatInfo { get; set; }
 
     public override Task SetParametersAsync(ParameterView parameters)
@@ -61,15 +60,17 @@
                 await _chatInfo.LoadAsync();
                 if (_chatInfo.HistoryMsgItem.Count == 0)
                     await OnNewChat();
-                if (string.IsNullOrWhiteSpace(_chatInfo.OpenAIApiKey))
-                {
-                    var confirmed = (await PopupService.PromptAsync(
-                        "OpenAIAPIKey",
-                        "请输入OpenAI的APIKEY"
-                    ))?.Trim();
-                    if (!string.IsNullOrWhiteSpace(confirmed))
-                        _chatInfo.OpenAIApiKey = confirmed;
-                }
+#if Client
+            if (string.IsNullOrWhiteSpace(_chatInfo.OpenAIApiKey))
+            {
+                var confirmed = (await PopupService.PromptAsync(
+                    "OpenAIAPIKey",
+                    "请输入OpenAI的APIKEY"
+                ))?.Trim();
+                if (!string.IsNullOrWhiteSpace(confirmed))
+                    _chatInfo.OpenAIApiKey = confirmed;
+            }
+#endif
                 await _chatInfo.SaveAsync();
                 if (!string.IsNullOrWhiteSpace(_chatInfo.SelectHistoryMsgId) && _chatInfo.ChatMsgItem.ContainsKey(_chatInfo.SelectHistoryMsgId))
                 {
@@ -77,10 +78,6 @@
                     if (chatMsgItem != null)
                         await ScrollService.ScrollToElementBottomAsync(chatMsgItem.Id);
                 }
-                var h = new HttpClient();
-                h.BaseAddress = new Uri("https://api.openai.com");
-                h.DefaultRequestHeaders.Add("Authorization", $"Bearer {_chatInfo.OpenAIApiKey}");
-                _openAIChatService = new ChatCompletionService(h);
                 await InvokeAsync(StateHasChanged);
             }
         });
@@ -181,7 +178,18 @@
                 }
             }
 
-            await foreach (var t in _openAIChatService.GetStream(messages, o =>
+            var h = new HttpClient();
+            h.BaseAddress = new Uri("https://api.openai.com");
+            var apiKey = _chatInfo.OpenAIApiKey;
+#if Server
+        var envKey = Environment.GetEnvironmentVariable("OenAPIKey");
+        if (string.IsNullOrWhiteSpace(apiKey))
+            apiKey = envKey;
+#endif
+            if (!string.IsNullOrWhiteSpace(apiKey))
+                h.DefaultRequestHeaders.Add("Authorization", $"Bearer {apiKey}");
+            var openAIChatService = new ChatCompletionService(h);
+            await foreach (var t in openAIChatService.GetStream(messages, o =>
             {
                 o.MaxTokens = 512;
                 o.Temperature = 0.7;
