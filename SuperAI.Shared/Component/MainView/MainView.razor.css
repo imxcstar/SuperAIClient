@@ -40,22 +40,6 @@
     padding: 40px 10px 10px 10px;
 }
 
-@media screen and (max-width: 768px) {
-    .left-box {
-        display: none;
-    }
-
-    .right-box {
-        width: 100%;
-        height: calc(100% - 10px);
-        border: 1px solid #BBBBBB;
-        border-radius: 6px;
-        margin-left: 10px;
-        margin-right: 10px;
-        min-width: calc(100% - 20px);
-    }
-}
-
 .chat-box {
     width: 100%;
     height: 100%;
@@ -69,4 +53,32 @@
     justify-content: center;
     position: relative;
     bottom: 80px;
+}
+
+::deep .chat-box-msg-list {
+    padding-bottom: 5%;
+}
+
+@media screen and (max-width: 768px) {
+    .main {
+        padding-top: 10px;
+    }
+
+    ::deep .chat-box-msg-list {
+        padding-bottom: 20%;
+    }
+
+    .left-box {
+        display: none;
+    }
+
+    .right-box {
+        width: 100%;
+        height: calc(100% - 10px);
+        border: 0px solid #BBBBBB;
+        border-radius: 6px;
+        margin-left: 10px;
+        margin-right: 10px;
+        min-width: calc(100% - 20px);
+    }
 }

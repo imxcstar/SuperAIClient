@@ -27,6 +27,30 @@ async function scrollToElementBottom(elementId, minHeight) {
     }
 }
 
+async function setupScrollListener(element, dotnetHelper) {
+    element.addEventListener('scroll', () => {
+        const { scrollTop, scrollHeight, clientHeight } = element;
+        const shouldAutoScroll = scrollTop + clientHeight + 80 >= scrollHeight;
+        dotnetHelper.invokeMethodAsync('SetShouldAutoScroll', shouldAutoScroll);
+    });
+}
+
+async function scrollToBottom(element) {
+    element.scrollTop = element.scrollHeight;
+}
+
+async function scrollToBottomAndWaitElement(element, awitElementId, minHeight) {
+    const waitElement = document.getElementById(awitElementId);
+
+    if (waitElement && waitElement.offsetHeight >= minHeight) {
+        element.scrollTop = element.scrollHeight;
+    } else {
+        waitForElement(awitElementId, minHeight, (waitElement) => {
+            element.scrollTop = element.scrollHeight;
+        });
+    }
+}
+
 export {
-    scrollToElementBottom
+    scrollToElementBottom, setupScrollListener, scrollToBottom, scrollToBottomAndWaitElement
 }

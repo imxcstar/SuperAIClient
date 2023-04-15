@@ -1,31 +1,35 @@
-﻿@using SuperAIClient.Shared.Component.ChatMsgList;
+﻿@using Microsoft.JSInterop;
+@using SuperAI.Shared.Services.UIService;
+@using SuperAIClient.Shared.Component.ChatMsgList;
+@inject IScrollService ScrollService;
+@inject IJSRuntime JSRuntime
 
-<div class="chat-container" style="@Style">
+<div class="chat-container @Class" @ref="@_contentDiv" style="@Style">
     @foreach (var item in Items)
     {
         @switch (item.UserType)
         {
             case ChatUserType.Sender:
-                <div class="message-wrapper message-right" id="@item.Id">
-                    <div class="message">
-                        <div class="message-content">
-                            <MMarkdownIt Html="@true" Source="@item.Content.Replace("\n","\n\n")" Class="markdown-parser__basic" />
-                        </div>
-                        <span class="arrow-right"></span>
-                    </div>
-                    <img class="avatar" src="@item.HeadIconURL" alt="头像">
-                </div>
+                            <div class="message-wrapper message-right" id="@item.Id">
+                                <div class="message">
+                                    <div class="message-content">
+                                        <MMarkdownIt Html="@true" Source="@item.Content.Replace("\n","\n\n")" Class="markdown-parser__basic" />
+                                    </div>
+                                    <span class="arrow-right"></span>
+                                </div>
+                                <img class="avatar" src="@item.HeadIconURL" alt="头像">
+                            </div>
                 break;
             case ChatUserType.Receiver:
-                <div class="message-wrapper message-left" id="@item.Id">
-                    <img class="avatar" src="@item.HeadIconURL" alt="头像">
-                    <div class="message">
-                        <div class="message-content">
-                            <MMarkdownIt Html="@true" Source="@item.Content" Class="markdown-parser__basic" />
-                        </div>
-                        <span class="arrow-left"></span>
-                    </div>
-                </div>
+                            <div class="message-wrapper message-left" id="@item.Id">
+                                <img class="avatar" src="@item.HeadIconURL" alt="头像">
+                                <div class="message">
+                                    <div class="message-content">
+                                        <MMarkdownIt Html="@true" Source="@item.Content" Class="markdown-parser__basic" />
+                                    </div>
+                                    <span class="arrow-left"></span>
+                                </div>
+                            </div>
                 break;
             default:
                 break;
@@ -34,6 +38,9 @@
 </div>
 
 @code {
+    private ElementReference _contentDiv;
+    private bool shouldAutoScroll = true;
+
     [Parameter]
     public List<ChatMsgItem> Items { get; set; }
 
@@ -42,4 +49,34 @@
 
     [Parameter]
     public string Style { get; set; } = "";
+
+    [Parameter]
+    public string Class { get; set; } = "";
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await ScrollService.SetupScrollListenerAsync(_contentDiv, DotNetObjectReference.Create(this));
+        }
+    }
+
+    [JSInvokable]
+    public void SetShouldAutoScroll(bool value)
+    {
+        shouldAutoScroll = value;
+    }
+    
+    public async Task ScrollToBottomAndWaitElementAsync(string id)
+    {
+        await ScrollService.ScrollToBottomAndWaitElementAsync(_contentDiv, id);
+    }
+    
+    public async Task ScrollAutoToBottomAndWaitElementAsync(string id)
+    {
+        if (shouldAutoScroll)
+        {
+            await ScrollService.ScrollToBottomAndWaitElementAsync(_contentDiv, id);
+        }
+    }
 }

@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Components.Web;
 using SuperAI.Shared.Services.StorageService;
 using SuperAI.Shared.Services.UIService;
 using System.Net;
-
+HttpClient.DefaultProxy = new WebProxy("http://192.168.31.169:7890");
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
