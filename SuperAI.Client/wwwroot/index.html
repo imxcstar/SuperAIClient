@@ -30,6 +30,9 @@
             width: 100vw;
             height: 100vh;
             height: var(--app-height);
+            min-height: 100vh;
+            /* mobile viewport bug fix */
+            min-height: -webkit-fill-available;
         }
     </style>
 </head>
@@ -79,6 +82,7 @@
             doc.style.setProperty('--app-height', `${window.innerHeight}px`)
         }
         window.addEventListener('resize', appHeight)
+        window.addEventListener("DOMContentLoaded", appHeight);
         appHeight()
     </script>
 </body>
