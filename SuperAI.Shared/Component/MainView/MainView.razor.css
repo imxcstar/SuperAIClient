@@ -1,5 +1,5 @@
 .main {
-    height: 100%;
+    height: var(--app-height);
     display: flex;
     flex-direction: row;
     justify-content: center;
