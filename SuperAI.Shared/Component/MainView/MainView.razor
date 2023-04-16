@@ -55,10 +55,10 @@
                         </MButton>
                         </MAppBar>
                     </div>
-                    @if (_chatInfo.ChatMsgItem.ContainsKey(_chatInfo.SelectHistoryMsgId))
+                @if (_chatInfo.ChatMsgItem.ContainsKey(_chatInfo.SelectHistoryMsgId))
                 {
                     <div class="chat-box">
-                        <ChatMsgList @ref="@_chatMsgList" Items="@_chatInfo.ChatMsgItem[_chatInfo.SelectHistoryMsgId]" Class="chat-box-msg-list"></ChatMsgList>
+                        <ChatMsgList @ref="@_chatMsgList" Items="@_chatInfo.ChatMsgItem[_chatInfo.SelectHistoryMsgId]" Class="chat-box-msg-list" OnItemRemove="@OnRemoveMsg"></ChatMsgList>
                     </div>
                     <div class="chat-con-box">
                         <ChatInputBox OnSendMsg="OnSendMsg"></ChatInputBox>
@@ -92,14 +92,14 @@
                 if (_chatInfo.HistoryMsgItem.Count == 0)
                     await OnNewChat();
 #if Client
-        if (string.IsNullOrWhiteSpace(_chatInfo.OpenAIApiKey))
-            {
-            var confirmed = (await PopupService.PromptAsync(
-                "OpenAIAPIKey",
-                "请输入OpenAI的APIKEY"
-            ))?.Trim();
-            if (!string.IsNullOrWhiteSpace(confirmed))
-                _chatInfo.OpenAIApiKey = confirmed;
+    if (string.IsNullOrWhiteSpace(_chatInfo.OpenAIApiKey))
+    {
+    var confirmed = (await PopupService.PromptAsync(
+        "OpenAIAPIKey",
+        "请输入OpenAI的APIKEY"
+    ))?.Trim();
+    if (!string.IsNullOrWhiteSpace(confirmed))
+        _chatInfo.OpenAIApiKey = confirmed;
             }
 #endif
                 await _chatInfo.SaveAsync();
@@ -217,7 +217,7 @@
 #if Server
     var envKey = Environment.GetEnvironmentVariable("OenAPIKey");
     if (string.IsNullOrWhiteSpace(apiKey))
-        apiKey = envKey;
+    apiKey = envKey;
 #endif
             if (!string.IsNullOrWhiteSpace(apiKey))
                 h.DefaultRequestHeaders.Add("Authorization", $"Bearer {apiKey}");
@@ -243,5 +243,16 @@
             Console.WriteLine("--------------error-------------");
             Console.WriteLine(ex.Message);
         }
+    }
+
+    public async Task OnRemoveMsg(ChatMsgItem msg)
+    {
+        if (!_chatInfo.ChatMsgItem.ContainsKey(_chatInfo.SelectHistoryMsgId))
+            return;
+
+        var chatMsgList = _chatInfo.ChatMsgItem[_chatInfo.SelectHistoryMsgId];
+        chatMsgList.Remove(msg);
+
+        await _chatInfo.SaveAsync();
     }
 }

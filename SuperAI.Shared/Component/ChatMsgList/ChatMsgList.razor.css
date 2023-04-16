@@ -82,3 +82,8 @@
 .message-right {
     justify-content: flex-end;
 }
+
+.message-box {
+    display: flex;
+    flex-direction: column;
+}
