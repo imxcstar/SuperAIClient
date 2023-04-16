@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="zh-cn" style="height: 100%; overflow: hidden;">
+<html lang="zh-cn">
 
 <head>
     <meta charset="utf-8" />
@@ -17,9 +17,24 @@
     <!--highlight-->
     <link rel="stylesheet" href="highlight/github.min.css">
     <script src="highlight/highlight.min.js"></script>
+    <style>
+        :root {
+            -app-height: 100%;
+        }
+
+        html,
+        body {
+            padding: 0;
+            margin: 0;
+            overflow: hidden;
+            width: 100vw;
+            height: 100vh;
+            height: var(-app-height);
+        }
+    </style>
 </head>
 
-<body style="height: 100%; overflow: hidden;">
+<body>
     <div id="app" style="height: 100%">Loading...</div>
 
     <div id="blazor-error-ui">
@@ -57,6 +72,14 @@
                 }
             }
         });
+    </script>
+    <script>
+        const appHeight = () => {
+            const doc = document.documentElement
+            doc.style.setProperty('-app-height', `${window.innerHeight}px`)
+        }
+        window.addEventListener('resize', appHeight)
+        appHeight()
     </script>
 </body>
 
