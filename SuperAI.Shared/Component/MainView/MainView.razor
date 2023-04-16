@@ -18,6 +18,23 @@
 <MApp Style="height: 100%">
     <MMain Style="height: 100%">
         <div class="main">
+            <MNavigationDrawer @bind-Value="_drawerMobileLeftBox"
+                                          Absolute
+                                          Temporary>
+                @if (_drawerMobileLeftBox)
+                {
+                    <div class="left-box-mobile">
+                        <HeadConMenu></HeadConMenu>
+                        <div class="msg-box-mobile">
+                            <HistoryMsgList Items="@_chatInfo.HistoryMsgItem" OnRemoveItem="OnRemoveHistoryMsg" OnSelectItem="OnSelectHistoryMsg" SelectId="@_chatInfo.SelectHistoryMsgId"></HistoryMsgList>
+                        </div>
+                        <MDivider class="my-3"></MDivider>
+                        <MButton Depressed Rounded Text OnClick="OnSetting">
+                        <MIcon Color="grey darken-3">mdi-cog</MIcon>设置
+                        </MButton>
+                    </div>
+                }
+            </MNavigationDrawer>
             <div class="left-box">
                 <HeadConMenu OnNewChat="OnNewChat" OnClearChat="OnClearChat" OnSetting="OnSetting"></HeadConMenu>
                 <div class="msg-box">
@@ -25,7 +42,20 @@
                 </div>
             </div>
             <div class="right-box">
-                @if (_chatInfo.ChatMsgItem.ContainsKey(_chatInfo.SelectHistoryMsgId))
+                <div class="msg-app-bar">
+                    <MAppBar Dense Dark>
+                        <MAppBarNavIcon @onclick="() => _drawerMobileLeftBox = true"></MAppBarNavIcon>
+
+                        <MToolbarTitle>新的聊天</MToolbarTitle>
+
+                        <MSpacer></MSpacer>
+
+                        <MButton Icon OnClick="OnNewChat">
+                            <MIcon>mdi-plus</MIcon>
+                        </MButton>
+                        </MAppBar>
+                    </div>
+                    @if (_chatInfo.ChatMsgItem.ContainsKey(_chatInfo.SelectHistoryMsgId))
                 {
                     <div class="chat-box">
                         <ChatMsgList @ref="@_chatMsgList" Items="@_chatInfo.ChatMsgItem[_chatInfo.SelectHistoryMsgId]" Class="chat-box-msg-list"></ChatMsgList>
@@ -40,6 +70,7 @@
 </MApp>
 
 @code {
+    private bool _drawerMobileLeftBox;
     private ChatMsgList _chatMsgList;
     private ChatInfo _chatInfo;
 
