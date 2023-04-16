@@ -2,13 +2,13 @@
 
 [English](./README.md) | [中文](./README_ZH.md)
 
-## Server Side(Free Or Custom APIKey(Note: Customized APIKey will pass through the server, but the server will not save them))
-
-http://ai.e-desk.cloud
-
-## Client Side(Custom APIKey)
+## (Note: The APIKey will be forwarded by the accelerated server, but the server will not save the APIKey)
 
 http://ai-client.e-desk.cloud
 
 ## Preview
 ![Main](./Preview/1.png)
+
+## Related resources
+- [MASA.Blazor](https://github.com/masastack/MASA.Blazor)
+- [ChatGptApiGateway](https://github.com/239573049/ChatGptApiGateway)
