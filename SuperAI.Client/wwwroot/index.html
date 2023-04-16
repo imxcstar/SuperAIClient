@@ -19,7 +19,7 @@
     <script src="highlight/highlight.min.js"></script>
     <style>
         :root {
-            -app-height: 100%;
+            --app-height: 100%;
         }
 
         html,
@@ -29,7 +29,7 @@
             overflow: hidden;
             width: 100vw;
             height: 100vh;
-            height: var(-app-height);
+            height: var(--app-height);
         }
     </style>
 </head>
@@ -76,7 +76,7 @@
     <script>
         const appHeight = () => {
             const doc = document.documentElement
-            doc.style.setProperty('-app-height', `${window.innerHeight}px`)
+            doc.style.setProperty('--app-height', `${window.innerHeight}px`)
         }
         window.addEventListener('resize', appHeight)
         appHeight()
