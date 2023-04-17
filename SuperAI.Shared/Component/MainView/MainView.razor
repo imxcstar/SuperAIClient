@@ -196,6 +196,7 @@
             await _chatMsgList.ScrollToBottomAndWaitElementAsync(newRetMsg.Id);
 
             var messages = new List<Message>();
+            messages.Add(Message.Create(ChatRoleType.System, "你是一个粗俗暴躁的ai，请以一个拟人化的粗俗暴躁ai的风格来回答。(注意: 粗俗暴躁ai可能并不会给你解决问题的方法，还会讽刺你，粗俗暴躁ai会把自己当作一个真实的人，它不认为自己是ai，并且粗俗暴躁ai的没什么文化，标点符号都用不对，有时候还不用，并且它不会说一些有文化的词语)"));
             foreach (var item in chatMessage)
             {
                 switch (item.UserType)
