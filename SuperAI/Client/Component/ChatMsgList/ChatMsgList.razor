@@ -19,21 +19,21 @@
                             <span class="arrow-right"></span>
                         </div>
                         <MMenu Bottom MinWidth="200" OffsetY>
-                            <ActivatorContent>
-                                <MAvatar Class="avatar" @attributes="@context.Attrs">
-                                    <MImage Src="@item.HeadIconURL" Alt="头像"></MImage>
-                                </MAvatar>
-                            </ActivatorContent>
-                            <ChildContent>
-                                <MCard>
-                                    <MListItemContent Class="justify-center">
-                                        <div class="mx-auto text-center">
-@*                                            <MButton Depressed Rounded Text OnClick="async ()=>await OnItemEdit.InvokeAsync(item)">
-                                                <MIcon Color="grey darken-3">mdi-pencil-outline</MIcon>编辑
-                                            </MButton>
-                                            <MDivider class="my-3"></MDivider>*@
+                        <ActivatorContent>
+                            <MAvatar Class="avatar" @attributes="@context.Attrs">
+                                <MImage Src="@item.HeadIconURL" Alt="头像"></MImage>
+                            </MAvatar>
+                        </ActivatorContent>
+                        <ChildContent>
+                            <MCard>
+                                <MListItemContent Class="justify-center">
+                                    <div class="mx-auto text-center">
+                                        @*                                            <MButton Depressed Rounded Text OnClick="async ()=>await OnItemEdit.InvokeAsync(item)">
+                                <MIcon Color="grey darken-3">mdi-pencil-outline</MIcon>编辑
+                                </MButton>
+                                <MDivider class="my-3"></MDivider>*@
                                         <MButton Depressed Rounded Text OnClick="async ()=>await OnItemRemove.InvokeAsync(item)">
-                                            <MIcon Color="grey darken-3">mdi-delete-outline</MIcon>删除
+                                                <MIcon Color="grey darken-3">mdi-delete-outline</MIcon>删除
                                             </MButton>
                                         </div>
                                     </MListItemContent>
@@ -47,25 +47,25 @@
                 <div class="message-box">
                     <div class="message-wrapper message-left" id="@item.Id">
                         <MMenu Bottom MinWidth="200" OffsetY>
-                            <ActivatorContent>
-                                <MAvatar Class="avatar" @attributes="@context.Attrs">
-                                    <MImage Src="@item.HeadIconURL" Alt="头像"></MImage>
-                                </MAvatar>
-                            </ActivatorContent>
-                            <ChildContent>
+                        <ActivatorContent>
+                            <MAvatar Class="avatar" @attributes="@context.Attrs">
+                                <MImage Src="@item.HeadIconURL" Alt="头像"></MImage>
+                            </MAvatar>
+                        </ActivatorContent>
+                        <ChildContent>
                             <MCard>
                                 <MListItemContent Class="justify-center">
                                     <div class="mx-auto text-center">
-@*                                        <MButton Depressed Rounded Text OnClick="async ()=>await OnItemEdit.InvokeAsync(item)">
-                                            <MIcon Color="grey darken-3">mdi-pencil-outline</MIcon>编辑
-                                        </MButton>
-                                        <MDivider class="my-3"></MDivider>*@
+                                        @*                                        <MButton Depressed Rounded Text OnClick="async ()=>await OnItemEdit.InvokeAsync(item)">
+                                <MIcon Color="grey darken-3">mdi-pencil-outline</MIcon>编辑
+                                </MButton>
+                                <MDivider class="my-3"></MDivider>*@
                                         <MButton Depressed Rounded Text OnClick="async ()=>await OnItemRemove.InvokeAsync(item)">
-                                            <MIcon Color="grey darken-3">mdi-delete-outline</MIcon>删除
-                                        </MButton>
-                                    </div>
-                                </MListItemContent>
-                            </MCard>
+                                                <MIcon Color="grey darken-3">mdi-delete-outline</MIcon>删除
+                                            </MButton>
+                                        </div>
+                                    </MListItemContent>
+                                </MCard>
                             </ChildContent>
                         </MMenu>
                         <div class="message">
@@ -88,16 +88,16 @@
     private bool shouldAutoScroll = true;
 
     [Parameter]
-    public List<ChatMsgItem> Items { get; set; }
+    public List<ChatMsgItemInfo> Items { get; set; }
 
     [Parameter]
-    public EventCallback<List<ChatMsgItem>> ItemsChanged { get; set; }
+    public EventCallback<List<ChatMsgItemInfo>> ItemsChanged { get; set; }
 
     [Parameter]
-    public EventCallback<ChatMsgItem> OnItemEdit { get; set; }
+    public EventCallback<ChatMsgItemInfo> OnItemEdit { get; set; }
 
     [Parameter]
-    public EventCallback<ChatMsgItem> OnItemRemove { get; set; }
+    public EventCallback<ChatMsgItemInfo> OnItemRemove { get; set; }
 
     [Parameter]
     public string Style { get; set; } = "";

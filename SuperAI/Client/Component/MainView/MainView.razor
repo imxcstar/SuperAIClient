@@ -16,9 +16,7 @@
 <MApp Style="height: 100%">
     <MMain Style="height: 100%">
         <div class="main">
-            <MNavigationDrawer @bind-Value="_drawerMobileLeftBox"
-                                          Absolute
-                                          Temporary>
+            <MNavigationDrawer @bind-Value="_drawerMobileLeftBox" Absolute Temporary>
                 @if (_drawerMobileLeftBox)
                 {
                     <div class="left-box-mobile">
@@ -28,7 +26,7 @@
                         </div>
                         <MDivider class="my-3"></MDivider>
                         <MButton Depressed Rounded Text OnClick="OnSetting">
-                        <MIcon Color="grey darken-3">mdi-cog</MIcon>设置
+                            <MIcon Color="grey darken-3">mdi-cog</MIcon>设置
                         </MButton>
                     </div>
                 }
@@ -51,8 +49,8 @@
                         <MButton Icon OnClick="OnNewChat">
                             <MIcon>mdi-plus</MIcon>
                         </MButton>
-                        </MAppBar>
-                    </div>
+                    </MAppBar>
+                </div>
                 @if (_chatInfo.ChatMsgItem.ContainsKey(_chatInfo.SelectHistoryMsgId))
                 {
                     <div class="chat-box">
@@ -89,17 +87,15 @@
                 await _chatInfo.LoadAsync();
                 if (_chatInfo.HistoryMsgItem.Count == 0)
                     await OnNewChat();
-#if Client
-    if (string.IsNullOrWhiteSpace(_chatInfo.OpenAIApiKey))
-    {
-    var confirmed = (await PopupService.PromptAsync(
-        "OpenAIAPIKey",
-        "请输入OpenAI的APIKEY"
-    ))?.Trim();
-    if (!string.IsNullOrWhiteSpace(confirmed))
-        _chatInfo.OpenAIApiKey = confirmed;
-            }
-#endif
+                if (string.IsNullOrWhiteSpace(_chatInfo.OpenAIApiKey))
+                {
+                    var confirmed = (await PopupService.PromptAsync(
+                        "OpenAIAPIKey",
+                        "请输入OpenAI的APIKEY"
+                    ))?.Trim();
+                    if (!string.IsNullOrWhiteSpace(confirmed))
+                        _chatInfo.OpenAIApiKey = confirmed;
+                }
                 await _chatInfo.SaveAsync();
                 await InvokeAsync(StateHasChanged);
                 if (!string.IsNullOrWhiteSpace(_chatInfo.SelectHistoryMsgId) && _chatInfo.ChatMsgItem.ContainsKey(_chatInfo.SelectHistoryMsgId))
@@ -150,7 +146,7 @@
         _chatInfo.SelectHistoryMsgId = item.Id;
         if (!_chatInfo.ChatMsgItem.ContainsKey(_chatInfo.SelectHistoryMsgId))
         {
-            _chatInfo.ChatMsgItem[_chatInfo.SelectHistoryMsgId] = new List<ChatMsgItem>();
+            _chatInfo.ChatMsgItem[_chatInfo.SelectHistoryMsgId] = new List<ChatMsgItemInfo>();
         }
         await _chatInfo.SaveAsync();
         var chatMsgItem = _chatInfo.ChatMsgItem[_chatInfo.SelectHistoryMsgId].LastOrDefault();
@@ -166,7 +162,7 @@
                 return;
 
             var chatMsgList = _chatInfo.ChatMsgItem[_chatInfo.SelectHistoryMsgId];
-            var newMsg = new ChatMsgItem()
+            var newMsg = new ChatMsgItemInfo()
                 {
                     Id = Guid.NewGuid().ToString(),
                     HeadIconURL = "./icon/sender.png",
@@ -180,7 +176,7 @@
             await _chatMsgList.ScrollToBottomAndWaitElementAsync(newMsg.Id);
             var chatMessage = chatMsgList.Skip(chatMsgList.Count <= 10 ? 0 : chatMsgList.Count - 10).Take(10).ToList();
             await _chatInfo.SaveAsync();
-            var newRetMsg = new ChatMsgItem()
+            var newRetMsg = new ChatMsgItemInfo()
                 {
                     Id = Guid.NewGuid().ToString(),
                     HeadIconURL = "./icon/receiver.png",
@@ -212,11 +208,6 @@
             var h = new HttpClient();
             h.BaseAddress = new Uri("https://superai.e-desk.cloud");
             var apiKey = _chatInfo.OpenAIApiKey;
-#if Server
-    var envKey = Environment.GetEnvironmentVariable("OenAPIKey");
-    if (string.IsNullOrWhiteSpace(apiKey))
-    apiKey = envKey;
-#endif
             if (!string.IsNullOrWhiteSpace(apiKey))
                 h.DefaultRequestHeaders.Add("Authorization", $"Bearer {apiKey}");
             var openAIChatService = new ChatCompletionService(h);
@@ -243,7 +234,7 @@
         }
     }
 
-    public async Task OnRemoveMsg(ChatMsgItem msg)
+    public async Task OnRemoveMsg(ChatMsgItemInfo msg)
     {
         if (!_chatInfo.ChatMsgItem.ContainsKey(_chatInfo.SelectHistoryMsgId))
             return;

@@ -10,7 +10,7 @@ namespace SuperAI.Client.Component.MainView
         private readonly IStorageService _storageService;
 
         public List<HistoryMsgItem> HistoryMsgItem { get; set; } = new List<HistoryMsgItem>();
-        public Dictionary<string, List<ChatMsgItem>> ChatMsgItem { get; set; } = new Dictionary<string, List<ChatMsgItem>>();
+        public Dictionary<string, List<ChatMsgItemInfo>> ChatMsgItem { get; set; } = new Dictionary<string, List<ChatMsgItemInfo>>();
         public string SelectHistoryMsgId { get; set; } = "";
         public string OpenAIApiKey { get; set; } = "";
 

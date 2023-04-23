@@ -1,6 +1,6 @@
 ﻿namespace SuperAI.Client.Component.ChatMsgList
 {
-    public class ChatMsgItem
+    public class ChatMsgItemInfo
     {
         public string Id { get; set; }
         public string Name { get; set; }

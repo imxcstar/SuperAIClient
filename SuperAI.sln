@@ -3,11 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.5.33530.505
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SuperAI.Server", "SuperAI\Server\SuperAI.Server.csproj", "{315342BD-3033-423F-B0F6-16500FE35541}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SuperAI.Server", "SuperAI\Server\SuperAI.Server.csproj", "{315342BD-3033-423F-B0F6-16500FE35541}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SuperAI.Client", "SuperAI\Client\SuperAI.Client.csproj", "{A2FBA8EF-C7FC-4A32-8FAA-02C619D09CB0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SuperAI.Client", "SuperAI\Client\SuperAI.Client.csproj", "{A2FBA8EF-C7FC-4A32-8FAA-02C619D09CB0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SuperAI.Shared", "SuperAI\Shared\SuperAI.Shared.csproj", "{58B4BD9F-3771-4C4C-B7F3-B1B2218E8E8A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SuperAI.Shared", "SuperAI\Shared\SuperAI.Shared.csproj", "{58B4BD9F-3771-4C4C-B7F3-B1B2218E8E8A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
