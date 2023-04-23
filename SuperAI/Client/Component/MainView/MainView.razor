@@ -1,0 +1,256 @@
+﻿@using Masa.Blazor;
+@using OpenAI.Net.Services;
+@using OpenAI.Net;
+@using SuperAI.Client.Component.ChatInputBox
+@using SuperAI.Client.Component.ChatMsgList
+@using SuperAI.Client.Component.HeadConMenu
+@using SuperAI.Client.Component.HistoryMsgList
+@using SuperAI.Client.Services.StorageService;
+@using SuperAI.Client.Services.UIService;
+@inherits LayoutComponentBase
+@inject IPopupService PopupService
+@inject IStorageService StorageService
+
+<PageTitle>SuperAI</PageTitle>
+
+<MApp Style="height: 100%">
+    <MMain Style="height: 100%">
+        <div class="main">
+            <MNavigationDrawer @bind-Value="_drawerMobileLeftBox"
+                                          Absolute
+                                          Temporary>
+                @if (_drawerMobileLeftBox)
+                {
+                    <div class="left-box-mobile">
+                        <HeadConMenu></HeadConMenu>
+                        <div class="msg-box-mobile">
+                            <HistoryMsgList Items="@_chatInfo.HistoryMsgItem" OnRemoveItem="OnRemoveHistoryMsg" OnSelectItem="OnSelectHistoryMsg" SelectId="@_chatInfo.SelectHistoryMsgId"></HistoryMsgList>
+                        </div>
+                        <MDivider class="my-3"></MDivider>
+                        <MButton Depressed Rounded Text OnClick="OnSetting">
+                        <MIcon Color="grey darken-3">mdi-cog</MIcon>设置
+                        </MButton>
+                    </div>
+                }
+            </MNavigationDrawer>
+            <div class="left-box">
+                <HeadConMenu OnNewChat="OnNewChat" OnClearChat="OnClearChat" OnSetting="OnSetting"></HeadConMenu>
+                <div class="msg-box">
+                    <HistoryMsgList Items="@_chatInfo.HistoryMsgItem" OnRemoveItem="OnRemoveHistoryMsg" OnSelectItem="OnSelectHistoryMsg" SelectId="@_chatInfo.SelectHistoryMsgId"></HistoryMsgList>
+                </div>
+            </div>
+            <div class="right-box">
+                <div class="msg-app-bar">
+                    <MAppBar Dense Dark>
+                        <MAppBarNavIcon @onclick="() => _drawerMobileLeftBox = true"></MAppBarNavIcon>
+
+                        <MToolbarTitle>新的聊天</MToolbarTitle>
+
+                        <MSpacer></MSpacer>
+
+                        <MButton Icon OnClick="OnNewChat">
+                            <MIcon>mdi-plus</MIcon>
+                        </MButton>
+                        </MAppBar>
+                    </div>
+                @if (_chatInfo.ChatMsgItem.ContainsKey(_chatInfo.SelectHistoryMsgId))
+                {
+                    <div class="chat-box">
+                        <ChatMsgList @ref="@_chatMsgList" Items="@_chatInfo.ChatMsgItem[_chatInfo.SelectHistoryMsgId]" Class="chat-box-msg-list" OnItemRemove="@OnRemoveMsg"></ChatMsgList>
+                    </div>
+                    <div class="chat-con-box">
+                        <ChatInputBox OnSendMsg="OnSendMsg"></ChatInputBox>
+                    </div>
+                }
+            </div>
+        </div>
+    </MMain>
+</MApp>
+
+@code {
+    private bool _drawerMobileLeftBox;
+    private ChatMsgList _chatMsgList;
+    private ChatInfo _chatInfo;
+
+    public override Task SetParametersAsync(ParameterView parameters)
+    {
+        if (_chatInfo == null)
+            _chatInfo = new ChatInfo(StorageService);
+        return base.SetParametersAsync(parameters);
+    }
+
+    protected override Task OnAfterRenderAsync(bool firstRender)
+    {
+        return Task.Run(async () =>
+        {
+            await base.OnAfterRenderAsync(firstRender);
+            if (firstRender)
+            {
+                await _chatInfo.LoadAsync();
+                if (_chatInfo.HistoryMsgItem.Count == 0)
+                    await OnNewChat();
+#if Client
+    if (string.IsNullOrWhiteSpace(_chatInfo.OpenAIApiKey))
+    {
+    var confirmed = (await PopupService.PromptAsync(
+        "OpenAIAPIKey",
+        "请输入OpenAI的APIKEY"
+    ))?.Trim();
+    if (!string.IsNullOrWhiteSpace(confirmed))
+        _chatInfo.OpenAIApiKey = confirmed;
+            }
+#endif
+                await _chatInfo.SaveAsync();
+                await InvokeAsync(StateHasChanged);
+                if (!string.IsNullOrWhiteSpace(_chatInfo.SelectHistoryMsgId) && _chatInfo.ChatMsgItem.ContainsKey(_chatInfo.SelectHistoryMsgId))
+                {
+                    var chatMsgItem = _chatInfo.ChatMsgItem[_chatInfo.SelectHistoryMsgId].LastOrDefault();
+                    if (chatMsgItem != null)
+                        await _chatMsgList.ScrollToBottomAndWaitElementAsync(chatMsgItem.Id);
+                }
+            }
+        });
+    }
+
+    public async Task OnNewChat()
+    {
+        var hmsg = _chatInfo.AddHistoryMsg("新的聊天");
+        await OnSelectHistoryMsg(hmsg);
+    }
+
+    public async Task OnClearChat()
+    {
+        _chatInfo.SelectHistoryMsgId = "";
+        _chatInfo.HistoryMsgItem.Clear();
+        _chatInfo.ChatMsgItem.Clear();
+        await _chatInfo.SaveAsync();
+    }
+
+    public async Task OnSetting()
+    {
+        var confirmed = (await PopupService.PromptAsync(
+            "OpenAIAPIKey",
+            "请输入OpenAI的APIKEY"
+        ))?.Trim();
+        if (!string.IsNullOrWhiteSpace(confirmed))
+            _chatInfo.OpenAIApiKey = confirmed;
+        await _chatInfo.SaveAsync();
+    }
+
+    public async Task OnRemoveHistoryMsg(HistoryMsgItem item)
+    {
+        if (item.Id == _chatInfo.SelectHistoryMsgId)
+            _chatInfo.SelectHistoryMsgId = "";
+        _chatInfo.ChatMsgItem.Remove(item.Id);
+        await _chatInfo.SaveAsync();
+    }
+
+    public async Task OnSelectHistoryMsg(HistoryMsgItem item)
+    {
+        _chatInfo.SelectHistoryMsgId = item.Id;
+        if (!_chatInfo.ChatMsgItem.ContainsKey(_chatInfo.SelectHistoryMsgId))
+        {
+            _chatInfo.ChatMsgItem[_chatInfo.SelectHistoryMsgId] = new List<ChatMsgItem>();
+        }
+        await _chatInfo.SaveAsync();
+        var chatMsgItem = _chatInfo.ChatMsgItem[_chatInfo.SelectHistoryMsgId].LastOrDefault();
+        if (chatMsgItem != null)
+            await _chatMsgList.ScrollToBottomAndWaitElementAsync(chatMsgItem.Id);
+    }
+
+    public async Task OnSendMsg(string msg)
+    {
+        try
+        {
+            if (!_chatInfo.ChatMsgItem.ContainsKey(_chatInfo.SelectHistoryMsgId))
+                return;
+
+            var chatMsgList = _chatInfo.ChatMsgItem[_chatInfo.SelectHistoryMsgId];
+            var newMsg = new ChatMsgItem()
+                {
+                    Id = Guid.NewGuid().ToString(),
+                    HeadIconURL = "./icon/sender.png",
+                    Name = "Sender",
+                    Content = msg,
+                    ContentType = ChatContentType.Text,
+                    UserType = ChatUserType.Sender
+                };
+            chatMsgList.Add(newMsg);
+            await InvokeAsync(StateHasChanged);
+            await _chatMsgList.ScrollToBottomAndWaitElementAsync(newMsg.Id);
+            var chatMessage = chatMsgList.Skip(chatMsgList.Count <= 10 ? 0 : chatMsgList.Count - 10).Take(10).ToList();
+            await _chatInfo.SaveAsync();
+            var newRetMsg = new ChatMsgItem()
+                {
+                    Id = Guid.NewGuid().ToString(),
+                    HeadIconURL = "./icon/receiver.png",
+                    Name = "Receiver",
+                    Content = "",
+                    ContentType = ChatContentType.Text,
+                    UserType = ChatUserType.Receiver
+                };
+            chatMsgList.Add(newRetMsg);
+            await InvokeAsync(StateHasChanged);
+            await _chatMsgList.ScrollToBottomAndWaitElementAsync(newRetMsg.Id);
+
+            var messages = new List<Message>();
+            foreach (var item in chatMessage)
+            {
+                switch (item.UserType)
+                {
+                    case ChatUserType.Sender:
+                        messages.Add(Message.Create(ChatRoleType.User, item.Content));
+                        break;
+                    case ChatUserType.Receiver:
+                        messages.Add(Message.Create(ChatRoleType.Assistant, item.Content));
+                        break;
+                    default:
+                        break;
+                }
+            }
+
+            var h = new HttpClient();
+            h.BaseAddress = new Uri("https://superai.e-desk.cloud");
+            var apiKey = _chatInfo.OpenAIApiKey;
+#if Server
+    var envKey = Environment.GetEnvironmentVariable("OenAPIKey");
+    if (string.IsNullOrWhiteSpace(apiKey))
+    apiKey = envKey;
+#endif
+            if (!string.IsNullOrWhiteSpace(apiKey))
+                h.DefaultRequestHeaders.Add("Authorization", $"Bearer {apiKey}");
+            var openAIChatService = new ChatCompletionService(h);
+            await foreach (var t in openAIChatService.GetStream(messages, o =>
+            {
+                o.MaxTokens = 512;
+                o.Temperature = 0.7;
+            }))
+            {
+                var ret = t?.Result?.Choices[0].Delta?.Content;
+                if (string.IsNullOrEmpty(ret))
+                    continue;
+                newRetMsg.Content += ret;
+                await InvokeAsync(StateHasChanged);
+                await _chatMsgList.ScrollAutoToBottomAndWaitElementAsync(newRetMsg.Id);
+            }
+
+            await _chatInfo.SaveAsync();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine("--------------error-------------");
+            Console.WriteLine(ex.Message);
+        }
+    }
+
+    public async Task OnRemoveMsg(ChatMsgItem msg)
+    {
+        if (!_chatInfo.ChatMsgItem.ContainsKey(_chatInfo.SelectHistoryMsgId))
+            return;
+
+        var chatMsgList = _chatInfo.ChatMsgItem[_chatInfo.SelectHistoryMsgId];
+        chatMsgList.Remove(msg);
+
+        await _chatInfo.SaveAsync();
+    }
+}
