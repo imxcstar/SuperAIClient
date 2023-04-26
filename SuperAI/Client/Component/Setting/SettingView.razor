@@ -1,0 +1,54 @@
+﻿@using Masa.Blazor.Presets;
+@using System.ComponentModel.DataAnnotations;
+
+<PModal @bind-Value="IsShow"
+        FormModel="Value"
+        Persistent
+        Title="设置"
+        Width="500"
+        OnSave="HandleOnSave"
+        OnCancel="HandleOnCancel">
+    <MRow>
+        <MCol Cols="12">
+            <MTextField @bind-Value="Value.URL"
+                        Label="服务地址"
+                        Dense
+                        Outlined
+                        HideDetails="@("auto")" />
+        </MCol>
+        <MCol Cols="12">
+            <MRadioGroup @bind-Value="Value.Mode"
+                         Row
+                         Dense
+                         Style="margin-top: 0"
+                         HideDetails="@("auto")">
+                <MRadio Label="聊天模式" Value="0"></MRadio>
+                <MRadio Label="Mud游戏模式" Value="1"></MRadio>
+            </MRadioGroup>
+        </MCol>
+    </MRow>
+</PModal>
+
+@code {
+    [Parameter]
+    public SettingInfo Value { get; set; }
+
+    [Parameter]
+    public bool IsShow { get; set; }
+
+    [Parameter]
+    public EventCallback OnSave { get; set; }
+
+    [Parameter]
+    public EventCallback OnCancel { get; set; }
+
+    private async Task HandleOnSave(ModalActionEventArgs args)
+    {
+        await OnSave.InvokeAsync();
+    }
+
+    private async Task HandleOnCancel()
+    {
+        await OnCancel.InvokeAsync();
+    }
+}

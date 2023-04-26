@@ -5,6 +5,7 @@
 @using SuperAI.Client.Component.ChatMsgList
 @using SuperAI.Client.Component.HeadConMenu
 @using SuperAI.Client.Component.HistoryMsgList
+@using SuperAI.Client.Component.Setting;
 @using SuperAI.Client.Services.StorageService;
 @using SuperAI.Client.Services.UIService;
 @inherits LayoutComponentBase
@@ -16,6 +17,7 @@
 <MApp Style="height: 100%">
     <MMain Style="height: 100%">
         <div class="main">
+            <SettingView IsShow="@_settingShow" Value="@settingInfo" OnSave="OnSettingSave" OnCancel="OnSettingCancel"></SettingView>
             <MNavigationDrawer @bind-Value="_drawerMobileLeftBox" Absolute Temporary>
                 @if (_drawerMobileLeftBox)
                 {
@@ -69,6 +71,8 @@
     private bool _drawerMobileLeftBox;
     private ChatMsgList _chatMsgList;
     private ChatInfo _chatInfo;
+    private bool _settingShow = false;
+    private SettingInfo settingInfo = new SettingInfo();
 
     public override Task SetParametersAsync(ParameterView parameters)
     {
@@ -108,6 +112,16 @@
         });
     }
 
+    public async Task OnSettingSave()
+    {
+        _settingShow = false;
+    }
+
+    public async Task OnSettingCancel()
+    {
+        _settingShow = false;
+    }
+
     public async Task OnNewChat()
     {
         var hmsg = _chatInfo.AddHistoryMsg("新的聊天");
@@ -124,13 +138,14 @@
 
     public async Task OnSetting()
     {
-        var confirmed = (await PopupService.PromptAsync(
-            "OpenAIAPIKey",
-            "请输入OpenAI的APIKEY"
-        ))?.Trim();
-        if (!string.IsNullOrWhiteSpace(confirmed))
-            _chatInfo.OpenAIApiKey = confirmed;
-        await _chatInfo.SaveAsync();
+        _settingShow = true;
+        //var confirmed = (await PopupService.PromptAsync(
+        //    "OpenAIAPIKey",
+        //    "请输入OpenAI的APIKEY"
+        //))?.Trim();
+        //if (!string.IsNullOrWhiteSpace(confirmed))
+        //    _chatInfo.OpenAIApiKey = confirmed;
+        //await _chatInfo.SaveAsync();
     }
 
     public async Task OnRemoveHistoryMsg(HistoryMsgItem item)

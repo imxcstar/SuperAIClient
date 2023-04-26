@@ -3,9 +3,7 @@ using System.Net.Http.Json;
 using System.Text.Json;
 using OpenAI.Net.Models;
 using System.Text;
-#if Client
 using Microsoft.AspNetCore.Components.WebAssembly.Http;
-#endif
 
 namespace OpenAI.Net
 {
@@ -75,9 +73,7 @@ namespace OpenAI.Net
 
             using (HttpRequestMessage requestMessage = new HttpRequestMessage(HttpMethod.Post, path))
             {
-#if Client
                 requestMessage.SetBrowserResponseStreamingEnabled(true);
-#endif
                 requestMessage.Content = new StringContent(JsonSerializer.Serialize(@object, jsonSerializerOptions), UnicodeEncoding.UTF8, "application/json");
                 
                 var response = await httpClient.SendAsync(requestMessage, HttpCompletionOption.ResponseHeadersRead);

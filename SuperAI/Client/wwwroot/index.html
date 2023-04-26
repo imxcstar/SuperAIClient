@@ -7,6 +7,7 @@
     <title>SuperAI</title>
     <base href="/" />
     <link href="css/app.css" rel="stylesheet" />
+    <link href="css/loading.css" rel="stylesheet" />
     <link rel="icon" type="image/png" href="icon/favicon.png" />
     <link href="SuperAI.Client.styles.css" rel="stylesheet" />
     <link href="manifest.json" rel="manifest" />
@@ -41,7 +42,19 @@
 </head>
 
 <body>
-    <div id="app" style="height: 100%">Loading...</div>
+    <div id="app" style="height: 100%">
+        <div class="loading">
+        </div>
+        <svg xmlns="http://www.w3.org/2000/svg" version="1.1">
+            <defs>
+                <filter id="goo">
+                    <feGaussianBlur in="SourceGraphic" stdDeviation="6.3" result="blur" />
+                    <feColorMatrix in="blur" mode="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 14 -4" result="goo" />
+                    <feBlend in="SourceGraphic" in2="goo" />
+                </filter>
+            </defs>
+        </svg>
+    </div>
 
     <div id="blazor-error-ui">
         An unhandled error has occurred.
