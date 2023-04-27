@@ -32,9 +32,9 @@
     </div>
     <div class="con-box">
         <div class="model-select-box">
-            <select class="model-select">
+            <select class="model-select" @onchange="SelectedModelChanged">
                 <option value="gpt-3.5-turbo">ChatGPT</option>
-                <option value="custom" disabled>自定义</option>
+                <option value="gpt-4">GPT4</option>
             </select>
         </div>
         <div class="progressbar-box">
@@ -52,6 +52,9 @@
 @code {
     [Parameter]
     public int Balance { get; set; } = 100;
+
+    [Parameter]
+    public EventCallback<string> OnSelectModel { get; set; }
 
     [Parameter]
     public EventCallback OnNewChat { get; set; }
@@ -76,5 +79,13 @@
     private void Setting()
     {
         OnSetting.InvokeAsync();
+    }
+
+    private async Task SelectedModelChanged(ChangeEventArgs e)
+    {
+        if (e.Value is null)
+            return;
+        var ret = (string)e.Value;
+        await OnSelectModel.InvokeAsync(ret);
     }
 }

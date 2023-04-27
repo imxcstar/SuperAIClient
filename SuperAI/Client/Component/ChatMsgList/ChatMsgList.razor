@@ -16,10 +16,10 @@
                     <MButton Depressed Rounded Text>
                         <MIcon Color="grey darken-3">mdi-delete-outline</MIcon>删除
                     </MButton>
-                    </MListItemContent>
-                    </MListItem>
-                    </MList>
-                    </MMenu>
+                </MListItemContent>
+            </MListItem>
+        </MList>
+    </MMenu>
     @foreach (var item in Items)
     {
         @switch (item.UserType)
@@ -153,11 +153,11 @@
 
     private async Task ShowMenu(MouseEventArgs args)
     {
-        showMenu = false;
-        await Task.Delay(16);
+        //showMenu = false;
+        //await Task.Delay(16);
 
-        X = args.ClientX;
-        Y = args.ClientY;
-        showMenu = true;
+        //X = args.ClientX;
+        //Y = args.ClientY;
+        //showMenu = true;
     }
 }

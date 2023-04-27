@@ -22,7 +22,7 @@
                 @if (_drawerMobileLeftBox)
                 {
                     <div class="left-box-mobile">
-                        <HeadConMenu></HeadConMenu>
+                        <HeadConMenu OnSelectModel="OnSelectModel"></HeadConMenu>
                         <div class="msg-box-mobile">
                             <HistoryMsgList Items="@_chatInfo.HistoryMsgItem" OnRemoveItem="OnRemoveHistoryMsg" OnSelectItem="OnSelectHistoryMsg" SelectId="@_chatInfo.SelectHistoryMsgId"></HistoryMsgList>
                         </div>
@@ -34,7 +34,7 @@
                 }
             </MNavigationDrawer>
             <div class="left-box">
-                <HeadConMenu OnNewChat="OnNewChat" OnClearChat="OnClearChat" OnSetting="OnSetting"></HeadConMenu>
+                <HeadConMenu OnNewChat="OnNewChat" OnClearChat="OnClearChat" OnSetting="OnSetting" OnSelectModel="OnSelectModel"></HeadConMenu>
                 <div class="msg-box">
                     <HistoryMsgList Items="@_chatInfo.HistoryMsgItem" OnRemoveItem="OnRemoveHistoryMsg" OnSelectItem="OnSelectHistoryMsg" SelectId="@_chatInfo.SelectHistoryMsgId"></HistoryMsgList>
                 </div>
@@ -73,6 +73,12 @@
     private ChatInfo _chatInfo;
     private bool _settingShow = false;
     private SettingInfo settingInfo = new SettingInfo();
+    private string _selectModel = "gpt-3.5-turbo";
+
+    public void OnSelectModel(string model)
+    {
+        _selectModel = model;
+    }
 
     public override Task SetParametersAsync(ParameterView parameters)
     {
@@ -138,14 +144,14 @@
 
     public async Task OnSetting()
     {
-        _settingShow = true;
-        //var confirmed = (await PopupService.PromptAsync(
-        //    "OpenAIAPIKey",
-        //    "请输入OpenAI的APIKEY"
-        //))?.Trim();
-        //if (!string.IsNullOrWhiteSpace(confirmed))
-        //    _chatInfo.OpenAIApiKey = confirmed;
-        //await _chatInfo.SaveAsync();
+        //_settingShow = true;
+        var confirmed = (await PopupService.PromptAsync(
+            "OpenAIAPIKey",
+            "请输入OpenAI的APIKEY"
+        ))?.Trim();
+        if (!string.IsNullOrWhiteSpace(confirmed))
+            _chatInfo.OpenAIApiKey = confirmed;
+        await _chatInfo.SaveAsync();
     }
 
     public async Task OnRemoveHistoryMsg(HistoryMsgItem item)
@@ -230,6 +236,7 @@
             {
                 o.MaxTokens = 512;
                 o.Temperature = 0.7;
+                o.Model = _selectModel;
             }))
             {
                 var ret = t?.Result?.Choices[0].Delta?.Content;
