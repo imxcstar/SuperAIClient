@@ -22,7 +22,7 @@
                 @if (_drawerMobileLeftBox)
                 {
                     <div class="left-box-mobile">
-                        <HeadConMenu OnSelectModel="OnSelectModel"></HeadConMenu>
+                        <HeadConMenu @bind-SelectModel="@_selectModel"></HeadConMenu>
                         <div class="msg-box-mobile">
                             <HistoryMsgList Items="@_chatInfo.HistoryMsgItem" OnRemoveItem="OnRemoveHistoryMsg" OnSelectItem="OnSelectHistoryMsg" SelectId="@_chatInfo.SelectHistoryMsgId"></HistoryMsgList>
                         </div>
@@ -34,7 +34,7 @@
                 }
             </MNavigationDrawer>
             <div class="left-box">
-                <HeadConMenu OnNewChat="OnNewChat" OnClearChat="OnClearChat" OnSetting="OnSetting" OnSelectModel="OnSelectModel"></HeadConMenu>
+                <HeadConMenu OnNewChat="OnNewChat" OnClearChat="OnClearChat" OnSetting="OnSetting" @bind-SelectModel="@_selectModel"></HeadConMenu>
                 <div class="msg-box">
                     <HistoryMsgList Items="@_chatInfo.HistoryMsgItem" OnRemoveItem="OnRemoveHistoryMsg" OnSelectItem="OnSelectHistoryMsg" SelectId="@_chatInfo.SelectHistoryMsgId"></HistoryMsgList>
                 </div>
@@ -74,11 +74,6 @@
     private bool _settingShow = false;
     private SettingInfo settingInfo = new SettingInfo();
     private string _selectModel = "gpt-3.5-turbo";
-
-    public void OnSelectModel(string model)
-    {
-        _selectModel = model;
-    }
 
     public override Task SetParametersAsync(ParameterView parameters)
     {
@@ -235,7 +230,6 @@
             await foreach (var t in openAIChatService.GetStream(messages, o =>
             {
                 o.MaxTokens = 512;
-                o.Temperature = 0.7;
                 o.Model = _selectModel;
             }))
             {

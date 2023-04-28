@@ -32,7 +32,7 @@
     </div>
     <div class="con-box">
         <div class="model-select-box">
-            <select class="model-select" @onchange="SelectedModelChanged">
+            <select class="model-select" @bind="_selectModel">
                 <option value="gpt-3.5-turbo">ChatGPT</option>
                 <option value="gpt-4">GPT4</option>
             </select>
@@ -54,7 +54,16 @@
     public int Balance { get; set; } = 100;
 
     [Parameter]
-    public EventCallback<string> OnSelectModel { get; set; }
+    public string SelectModel { get; set; } = "gpt-3.5-turbo";
+
+    [Parameter]
+    public EventCallback<string> SelectModelChanged { get; set; }
+
+    private string _selectModel
+    {
+        get => SelectModel;
+        set => SelectModelChanged.InvokeAsync(value);
+    }
 
     [Parameter]
     public EventCallback OnNewChat { get; set; }
@@ -79,13 +88,5 @@
     private void Setting()
     {
         OnSetting.InvokeAsync();
-    }
-
-    private async Task SelectedModelChanged(ChangeEventArgs e)
-    {
-        if (e.Value is null)
-            return;
-        var ret = (string)e.Value;
-        await OnSelectModel.InvokeAsync(ret);
     }
 }
