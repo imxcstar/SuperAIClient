@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using SuperAI.Client;
+using SuperAI.Client.Services.InteropService;
 using SuperAI.Client.Services.StorageService;
 using SuperAI.Client.Services.UIService;
 
@@ -22,5 +23,6 @@ builder.Services.AddMasaBlazor(builder =>
 builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
 builder.Services.AddSingleton<IStorageService, JSStorageInterop>();
 builder.Services.AddSingleton<IScrollService, JSScrollInterop>();
+builder.Services.AddSingleton<IJSEventInterop, JSEventInterop>();
 
 await builder.Build().RunAsync();
