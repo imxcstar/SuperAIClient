@@ -1,6 +1,9 @@
-﻿<div class="chat-input-box">
+﻿@using SuperAI.Client.Services.InteropService;
+@inject IJSEventInterop jsEventInterop
+
+<div class="chat-input-box">
     <div class="msg-box">
-        <textarea class="chat-input-textarea" @bind="@_msg" @bind:event="oninput" @onkeydown="OnKey" @onkeydown:preventDefault="@shouldPreventDefault"></textarea>
+        <textarea class="chat-input-textarea" @ref="inputElement" @bind="@_msg" @bind:event="oninput" @onkeydown="OnKey" @onkeydown:preventDefault="@shouldPreventDefault"></textarea>
     </div>
     <div class="msg-bon-box">
         <MButton Class="chat-input-send-btn" Icon Color="pink" OnClick="SendMsg">
@@ -10,11 +13,34 @@
 </div>
 
 @code {
+    private ElementReference inputElement;
     private bool shouldPreventDefault = false;
     private string _msg = "";
+    private bool IsComposing = false;
 
     [Parameter]
     public EventCallback<string> OnSendMsg { get; set; }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await jsEventInterop.HandleCompositionStart(inputElement, DotNetObjectReference.Create(this));
+            await jsEventInterop.handleCompositionEnd(inputElement, DotNetObjectReference.Create(this));
+        }
+    }
+
+    [JSInvokable]
+    public void CompositionStarted()
+    {
+        IsComposing = true;
+    }
+
+    [JSInvokable]
+    public void CompositionEnded()
+    {
+        IsComposing = false;
+    }
 
     private async Task SendMsg()
     {
@@ -27,7 +53,7 @@
 
     private async Task OnKey(KeyboardEventArgs args)
     {
-        if (args.Code == "Enter")
+        if (args.Code == "Enter" && !IsComposing)
         {
             shouldPreventDefault = true;
             await SendMsg();

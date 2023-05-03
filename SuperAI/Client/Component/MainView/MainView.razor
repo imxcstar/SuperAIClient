@@ -1,4 +1,5 @@
-﻿@using Masa.Blazor;
+﻿@using AI.Dev.OpenAI.GPT;
+@using Masa.Blazor;
 @using OpenAI.Net.Services;
 @using OpenAI.Net;
 @using SuperAI.Client.Component.ChatInputBox
@@ -109,6 +110,10 @@
                     if (chatMsgItem != null)
                         await _chatMsgList.ScrollToBottomAndWaitElementAsync(chatMsgItem.Id);
                 }
+                await Task.Run(() =>
+                {
+                    GPT3Tokenizer.Encode("load");
+                });
             }
         });
     }
@@ -220,16 +225,19 @@
                         break;
                 }
             }
-
             var h = new HttpClient();
             h.BaseAddress = new Uri("https://superai.e-desk.cloud");
             var apiKey = _chatInfo.OpenAIApiKey;
             if (!string.IsNullOrWhiteSpace(apiKey))
                 h.DefaultRequestHeaders.Add("Authorization", $"Bearer {apiKey}");
             var openAIChatService = new ChatCompletionService(h);
+            var messageTokens = GPT3Tokenizer.Encode(string.Join("\n", messages.Select(x => $"{x.Role}:{x.Content}"))).Count;
+            var maxTokens = (_selectModel == "gpt-4" ? 8192 : 4000) - messageTokens;
+            Console.WriteLine($"MessageTokens: {messageTokens}");
+            Console.WriteLine($"MaxTokens: {maxTokens}");
             await foreach (var t in openAIChatService.GetStream(messages, o =>
             {
-                o.MaxTokens = 512;
+                o.MaxTokens = maxTokens;
                 o.Model = _selectModel;
             }))
             {
