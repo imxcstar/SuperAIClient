@@ -3,7 +3,7 @@
 
 <div class="chat-input-box">
     <div class="msg-box">
-        <textarea class="chat-input-textarea" @ref="inputElement" @bind="@_msg" @bind:event="oninput" @onkeydown="OnKey" @onkeydown:preventDefault="@shouldPreventDefault"></textarea>
+        <textarea class="chat-input-textarea" style="@(_msg.Contains("\n")?"height: 100%;":"")" @ref="inputElement" @bind="@_msg" @bind:event="oninput" @onkeydown="OnKey" @onkeydown:preventDefault="@shouldPreventDefault"></textarea>
     </div>
     <div class="msg-bon-box">
         <MButton Class="chat-input-send-btn" Icon Color="pink" OnClick="SendMsg">
@@ -53,7 +53,11 @@
 
     private async Task OnKey(KeyboardEventArgs args)
     {
-        if (args.Code == "Enter" && !IsComposing)
+        if (args.ShiftKey && args.Code == "Enter" && !IsComposing)
+        {
+            shouldPreventDefault = false;
+        }
+        else if (args.Code == "Enter" && !IsComposing && !args.CtrlKey && !args.AltKey && !args.ShiftKey && !args.MetaKey)
         {
             shouldPreventDefault = true;
             await SendMsg();

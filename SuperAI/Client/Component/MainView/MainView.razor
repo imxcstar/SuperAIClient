@@ -110,10 +110,6 @@
                     if (chatMsgItem != null)
                         await _chatMsgList.ScrollToBottomAndWaitElementAsync(chatMsgItem.Id);
                 }
-                await Task.Run(() =>
-                {
-                    GPT3Tokenizer.Encode("load");
-                });
             }
         });
     }
@@ -235,6 +231,7 @@
             var maxTokens = (_selectModel == "gpt-4" ? 8192 : 4000) - messageTokens;
             Console.WriteLine($"MessageTokens: {messageTokens}");
             Console.WriteLine($"MaxTokens: {maxTokens}");
+            var messageCount = 0;
             await foreach (var t in openAIChatService.GetStream(messages, o =>
             {
                 o.MaxTokens = maxTokens;
@@ -244,10 +241,17 @@
                 var ret = t?.Result?.Choices[0].Delta?.Content;
                 if (string.IsNullOrEmpty(ret))
                     continue;
+                messageCount++;
                 newRetMsg.Content += ret;
-                await InvokeAsync(StateHasChanged);
-                await _chatMsgList.ScrollAutoToBottomAndWaitElementAsync(newRetMsg.Id);
+                if (messageCount >= 3)
+                {
+                    messageCount = 0;
+                    await InvokeAsync(StateHasChanged);
+                    await _chatMsgList.ScrollAutoToBottomAndWaitElementAsync(newRetMsg.Id);
+                }
             }
+            await InvokeAsync(StateHasChanged);
+            await _chatMsgList.ScrollAutoToBottomAndWaitElementAsync(newRetMsg.Id);
 
             await _chatInfo.SaveAsync();
         }
