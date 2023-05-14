@@ -7,8 +7,11 @@
 @using SuperAI.Client.Component.HeadConMenu
 @using SuperAI.Client.Component.HistoryMsgList
 @using SuperAI.Client.Component.Setting;
+@using SuperAI.Client.Services.CommonService;
 @using SuperAI.Client.Services.StorageService;
 @using SuperAI.Client.Services.UIService;
+@using System.Text.Json;
+@using System.Text.Json.Serialization;
 @inherits LayoutComponentBase
 @inject IPopupService PopupService
 @inject IStorageService StorageService
@@ -23,7 +26,7 @@
                 @if (_drawerMobileLeftBox)
                 {
                     <div class="left-box-mobile">
-                        <HeadConMenu @bind-SelectModel="@_selectModel"></HeadConMenu>
+                        <HeadConMenu @bind-SelectModel="@_selectModel" Balance="@_limit"></HeadConMenu>
                         <div class="msg-box-mobile">
                             <HistoryMsgList Items="@_chatInfo.HistoryMsgItem" OnRemoveItem="OnRemoveHistoryMsg" OnSelectItem="OnSelectHistoryMsg" SelectId="@_chatInfo.SelectHistoryMsgId"></HistoryMsgList>
                         </div>
@@ -35,7 +38,7 @@
                 }
             </MNavigationDrawer>
             <div class="left-box">
-                <HeadConMenu OnNewChat="OnNewChat" OnClearChat="OnClearChat" OnSetting="OnSetting" @bind-SelectModel="@_selectModel"></HeadConMenu>
+                <HeadConMenu OnNewChat="OnNewChat" OnClearChat="OnClearChat" OnSetting="OnSetting" @bind-SelectModel="@_selectModel" Balance="@_limit"></HeadConMenu>
                 <div class="msg-box">
                     <HistoryMsgList Items="@_chatInfo.HistoryMsgItem" OnRemoveItem="OnRemoveHistoryMsg" OnSelectItem="OnSelectHistoryMsg" SelectId="@_chatInfo.SelectHistoryMsgId"></HistoryMsgList>
                 </div>
@@ -75,6 +78,7 @@
     private bool _settingShow = false;
     private SettingInfo settingInfo = new SettingInfo();
     private string _selectModel = "gpt-3.5-turbo";
+    private string _limit = "∞";
 
     public override Task SetParametersAsync(ParameterView parameters)
     {
@@ -100,7 +104,14 @@
                         "请输入OpenAI的APIKEY"
                     ))?.Trim();
                     if (!string.IsNullOrWhiteSpace(confirmed))
+                    {
                         _chatInfo.OpenAIApiKey = confirmed;
+                        await RefLimitAsync(confirmed);
+                    }
+                }
+                else
+                {
+                    await RefLimitAsync(_chatInfo.OpenAIApiKey);
                 }
                 await _chatInfo.SaveAsync();
                 await InvokeAsync(StateHasChanged);
@@ -112,6 +123,38 @@
                 }
             }
         });
+    }
+
+    private class LimitInfo
+    {
+        [JsonPropertyName("data")]
+        public long Data{ get; set; }
+
+    }
+
+    public async Task RefLimitAsync(string key)
+    {
+        if (key.Length < 3 || key.Substring(0, 3) == "sk_")
+        {
+            _limit = "∞";
+            return;
+        }
+        try
+        {
+            var h = new HttpClientWrapper();
+            h.AddDefaultRequestHeader("Authorization", $"Bearer {key}");
+            var ret = await h.GetAsync("https://superai.e-desk.cloud/user/limit");
+            if (ret == null)
+                return;
+            var jsonRet = JsonSerializer.Deserialize<LimitInfo>(ret);
+            if (jsonRet == null)
+                return;
+            _limit = jsonRet.Data.ToString();
+        }
+        catch (Exception)
+        {
+            _limit = "x";
+        }
     }
 
     public async Task OnSettingSave()
@@ -145,8 +188,10 @@
             "OpenAIAPIKey",
             "请输入OpenAI的APIKEY"
         ))?.Trim();
-        if (!string.IsNullOrWhiteSpace(confirmed))
+        if (!string.IsNullOrWhiteSpace(confirmed)){
             _chatInfo.OpenAIApiKey = confirmed;
+            await RefLimitAsync(confirmed);
+        }
         await _chatInfo.SaveAsync();
     }
 
@@ -228,7 +273,7 @@
                 h.DefaultRequestHeaders.Add("Authorization", $"Bearer {apiKey}");
             var openAIChatService = new ChatCompletionService(h);
             var messageTokens = GPT3Tokenizer.Encode(string.Join("\n", messages.Select(x => $"{x.Role}:{x.Content}"))).Count;
-            var maxTokens = (_selectModel == "gpt-4" ? 8192 : 4000) - messageTokens;
+            var maxTokens = (_selectModel == "gpt-4" ? 8000 : 4000) - messageTokens;
             Console.WriteLine($"MessageTokens: {messageTokens}");
             Console.WriteLine($"MaxTokens: {maxTokens}");
             var messageCount = 0;
@@ -254,6 +299,8 @@
             await _chatMsgList.ScrollAutoToBottomAndWaitElementAsync(newRetMsg.Id);
 
             await _chatInfo.SaveAsync();
+
+            await RefLimitAsync(apiKey);
         }
         catch (Exception ex)
         {
