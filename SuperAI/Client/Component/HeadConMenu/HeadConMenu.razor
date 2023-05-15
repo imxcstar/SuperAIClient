@@ -21,6 +21,10 @@
                                 <MIcon Color="grey darken-3">mdi-delete-outline</MIcon>清空聊天
                             </MButton>
                             <MDivider class="my-3"></MDivider>
+                            <MButton Depressed Rounded Text OnClick="Recharge">
+                                <MIcon Color="grey darken-3">mdi-lightning-bolt</MIcon>充电
+                            </MButton>
+                            <MDivider class="my-3"></MDivider>
                             <MButton Depressed Rounded Text OnClick="Setting">
                                 <MIcon Color="grey darken-3">mdi-cog</MIcon>设置
                             </MButton>
@@ -74,6 +78,8 @@
     [Parameter]
     public EventCallback OnSetting { get; set; }
 
+    [Parameter]
+    public EventCallback OnRecharge { get; set; }
 
     private void NewChat()
     {
@@ -88,5 +94,10 @@
     private void Setting()
     {
         OnSetting.InvokeAsync();
+    }
+
+    private void Recharge()
+    {
+        OnRecharge.InvokeAsync();
     }
 }
