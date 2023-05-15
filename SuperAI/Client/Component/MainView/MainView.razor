@@ -31,6 +31,9 @@
                             <HistoryMsgList Items="@_chatInfo.HistoryMsgItem" OnRemoveItem="OnRemoveHistoryMsg" OnSelectItem="OnSelectHistoryMsg" SelectId="@_chatInfo.SelectHistoryMsgId"></HistoryMsgList>
                         </div>
                         <MDivider class="my-3"></MDivider>
+                        <MButton Depressed Rounded Text OnClick="OnRecharge">
+                            <MIcon Color="grey darken-3">mdi-lightning-bolt</MIcon>充电
+                        </MButton>
                         <MButton Depressed Rounded Text OnClick="OnSetting">
                             <MIcon Color="grey darken-3">mdi-cog</MIcon>设置
                         </MButton>
@@ -38,7 +41,7 @@
                 }
             </MNavigationDrawer>
             <div class="left-box">
-                <HeadConMenu OnNewChat="OnNewChat" OnClearChat="OnClearChat" OnSetting="OnSetting" @bind-SelectModel="@_selectModel" Balance="@_limit"></HeadConMenu>
+                <HeadConMenu OnNewChat="OnNewChat" OnClearChat="OnClearChat" OnSetting="OnSetting" OnRecharge="OnRecharge" @bind-SelectModel="@_selectModel" Balance="@_limit"></HeadConMenu>
                 <div class="msg-box">
                     <HistoryMsgList Items="@_chatInfo.HistoryMsgItem" OnRemoveItem="OnRemoveHistoryMsg" OnSelectItem="OnSelectHistoryMsg" SelectId="@_chatInfo.SelectHistoryMsgId"></HistoryMsgList>
                 </div>
@@ -79,6 +82,7 @@
     private SettingInfo settingInfo = new SettingInfo();
     private string _selectModel = "gpt-3.5-turbo";
     private string _limit = "∞";
+    private string _serviceAddress = "https://superai.e-desk.cloud";
 
     public override Task SetParametersAsync(ParameterView parameters)
     {
@@ -125,10 +129,19 @@
         });
     }
 
-    private class LimitInfo
+    private class UserInfo
+    {
+        [JsonPropertyName("limit")]
+        public long Limit { get; set; }
+
+        [JsonPropertyName("discount")]
+        public float Discount { get; set; }
+    }
+
+    private class DataInfo<T>
     {
         [JsonPropertyName("data")]
-        public long Data{ get; set; }
+        public T Data { get; set; }
 
     }
 
@@ -143,13 +156,13 @@
         {
             var h = new HttpClientWrapper();
             h.AddDefaultRequestHeader("Authorization", $"Bearer {key}");
-            var ret = await h.GetAsync("https://superai.e-desk.cloud/user/limit");
+            var ret = await h.GetAsync($"{_serviceAddress}/user/info");
             if (ret == null)
                 return;
-            var jsonRet = JsonSerializer.Deserialize<LimitInfo>(ret);
-            if (jsonRet == null)
+            var jsonRet = JsonSerializer.Deserialize<DataInfo<UserInfo>>(ret);
+            if (jsonRet == null || jsonRet.Data == null)
                 return;
-            _limit = jsonRet.Data.ToString();
+            _limit = jsonRet.Data.Limit.ToString();
         }
         catch (Exception)
         {
@@ -185,14 +198,36 @@
     {
         //_settingShow = true;
         var confirmed = (await PopupService.PromptAsync(
-            "OpenAIAPIKey",
-            "请输入OpenAI的APIKEY"
+            "Key",
+            "请输入OpenAI的APIKEY或充电Key"
         ))?.Trim();
         if (!string.IsNullOrWhiteSpace(confirmed)){
             _chatInfo.OpenAIApiKey = confirmed;
             await RefLimitAsync(confirmed);
         }
         await _chatInfo.SaveAsync();
+    }
+
+    public async Task OnRecharge()
+    {
+        var key = _chatInfo.OpenAIApiKey;
+        if (key.Length < 3 || key.Substring(0, 3) == "sk_")
+        {
+            await PopupService.ConfirmAsync("无法充电", "此Key不支持充电哟！", AlertTypes.Warning);
+            return;
+        }
+        var confirmed = (await PopupService.PromptAsync(
+            "充电",
+            "请放入电池"
+        ))?.Trim();
+        if (!string.IsNullOrWhiteSpace(confirmed))
+        {
+            var h = new HttpClientWrapper();
+            h.AddDefaultRequestHeader("Authorization", $"Bearer {key}");
+            var ret = await h.GetAsync($"{_serviceAddress}/user/recharge?battery={confirmed}");
+            await RefLimitAsync(key);
+            await PopupService.ConfirmAsync("充电完成", "已经充电完成了哟！", AlertTypes.Success);
+        }
     }
 
     public async Task OnRemoveHistoryMsg(HistoryMsgItem item)
@@ -267,7 +302,7 @@
                 }
             }
             var h = new HttpClient();
-            h.BaseAddress = new Uri("https://superai.e-desk.cloud");
+            h.BaseAddress = new Uri(_serviceAddress);
             var apiKey = _chatInfo.OpenAIApiKey;
             if (!string.IsNullOrWhiteSpace(apiKey))
                 h.DefaultRequestHeaders.Add("Authorization", $"Bearer {apiKey}");
