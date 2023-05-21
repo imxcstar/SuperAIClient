@@ -1,0 +1,52 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:md="clr-namespace:Markdown.Avalonia;assembly=Markdown.Avalonia"
+             xmlns:vm="using:SuperAIClient.ViewModels"
+             xmlns:converter="using:SuperAIClient.ViewModels.TypeConverter"
+             x:DataType="vm:MessageViewModel"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="250"
+             x:Class="SuperAIClient.Views.MessageView">
+    
+    <UserControl.Resources>
+        <converter:ColorConverter x:Key="ColorConverter"></converter:ColorConverter>
+    </UserControl.Resources>
+    
+    <Design.DataContext>
+        <vm:MessageViewModel/>
+    </Design.DataContext>
+    
+    <StackPanel>
+        <DockPanel Margin="10">
+            <Image DockPanel.Dock="{Binding Orientation}" VerticalAlignment="Top" Source="../Assets/receiver.png" Height="45" Width="45"></Image>
+            <Polygon DockPanel.Dock="{Binding Orientation}"
+                Points="0,22 10,12 10,32 0,22"
+                StrokeThickness="0">
+                <Polygon.Fill>
+                    <SolidColorBrush Color="{Binding Background}"/>
+                </Polygon.Fill>
+                <Polygon.RenderTransform>
+                    <TransformGroup>
+                        <ScaleTransform ScaleX="{Binding OrientationInt}" ScaleY="1"/>
+                    </TransformGroup>
+                </Polygon.RenderTransform>
+            </Polygon>
+            <Border Background="{Binding Background, Converter={StaticResource ColorConverter},ConverterParameter=IBrush}" CornerRadius="10">
+                <md:MarkdownScrollViewer DockPanel.Dock="Right" Markdown="{Binding Content}">
+                    <md:MarkdownScrollViewer.Styles>
+                        <Style Selector="Border.CodeBlock">
+                            <Style.Setters>
+                                <Setter Property="BorderThickness" Value="0"/>
+                                <Setter Property="Margin"          Value="5"/>
+                                <Setter Property="Padding" Value="5"></Setter>
+                                <Setter Property="Background"      Value="LightGray"/>
+                                <Setter Property="IsEnabled" Value="False"></Setter>
+                            </Style.Setters>
+                        </Style>
+                    </md:MarkdownScrollViewer.Styles>
+                </md:MarkdownScrollViewer>
+            </Border>
+        </DockPanel>
+    </StackPanel>
+</UserControl>
