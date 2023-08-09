@@ -32,7 +32,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
       - name: Install DotNet 8.0 SDK
-        run: sudo apt-get update && wget https://dot.net/v1/dotnet-install.sh -O dotnet-install.sh  && sudo chmod +x ./dotnet-install.sh && ./dotnet-install.sh --channel 8.0 --quality preview
+        run: sudo apt-get update && wget https://dot.net/v1/dotnet-install.sh -O dotnet-install.sh  && sudo chmod +x ./dotnet-install.sh && ./dotnet-install.sh --channel 8.0 --quality preview && ls /home/runner/.dotnet/
       - name: Install workloads And Build publish
         run: source /etc/profile && dotnet --info && dotnet workload install wasm-tools && dotnet publish ./SuperAI/Client/SuperAI.Client.csproj -c Release -o ./publish/
       - name: Setup Pages
