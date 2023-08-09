@@ -1,8 +1,10 @@
+using Microsoft.AspNetCore.Components.WebAssembly.Services;
 using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.AspNetCore.StaticFiles;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AddScoped<LazyAssemblyLoader>();
 // Add services to the container.
 
 builder.Services.AddControllersWithViews();

@@ -14,10 +14,8 @@
     <link rel="apple-touch-icon" sizes="512x512" href="icon/icon-512.png" />
     <link rel="apple-touch-icon" sizes="192x192" href="icon/icon-192.png" />
     <!--masa-->
-    <link href="_content/Masa.Blazor/css/masa-blazor.min.css" rel="stylesheet">
-    <link href="lib/masa/materialdesignicons.min.css" rel="stylesheet">
-    <link href="lib/masa/materialicons.css" rel="stylesheet">
-    <link href="lib/masa/all.css" rel="stylesheet">
+    <link href="_content/Masa.Blazor/css/masa-blazor.min.css" rel="stylesheet" />
+    <link href="https://cdn.masastack.com/npm/@mdi/font@7.1.96/css/materialdesignicons.min.css" rel="stylesheet">
     <!--highlight-->
     <link rel="stylesheet" href="lib/highlight/github.min.css">
     <script src="lib/highlight/highlight.min.js"></script>
@@ -62,7 +60,7 @@
         <a href="" class="reload">Reload</a>
         <a class="dismiss">🗙</a>
     </div>
-    <script src="_framework/blazor.webassembly.js" autostart="false"></script>
+    <script src="_framework/blazor.webassembly.js"></script>
     <script src="_content/BlazorComponent/js/blazor-component.js"></script>
     <style>
         .m-application p {
@@ -70,28 +68,6 @@
             margin-bottom: 8px !important;
         }
     </style>
-    <script type="module">
-        import { BrotliDecode } from './js/decode.min.js';
-        Blazor.start({
-            loadBootResource: function (type, name, defaultUri, integrity) {
-                if (type !== 'dotnetjs' && location.hostname !== 'localhost') {
-                    return (async function () {
-                        const response = await fetch(defaultUri + '.br', { cache: 'no-cache' });
-                        if (!response.ok) {
-                            throw new Error(response.statusText);
-                        }
-                        const originalResponseBuffer = await response.arrayBuffer();
-                        const originalResponseArray = new Int8Array(originalResponseBuffer);
-                        const decompressedResponseArray = BrotliDecode(originalResponseArray);
-                        const contentType = type ===
-                            'dotnetwasm' ? 'application/wasm' : 'application/octet-stream';
-                        return new Response(decompressedResponseArray,
-                            { headers: { 'content-type': contentType } });
-                    })();
-                }
-            }
-        });
-    </script>
     <script>navigator.serviceWorker.register('service-worker.js');</script>
     <script>
         const appHeight = () => {

@@ -23,7 +23,7 @@
         <div class="main">
             <SettingView IsShow="@_settingShow" Value="@settingInfo" OnSave="OnSettingSave" OnCancel="OnSettingCancel"></SettingView>
             <MNavigationDrawer @bind-Value="_drawerMobileLeftBox" Absolute Temporary>
-                @if (_drawerMobileLeftBox)
+                @if (_drawerMobileLeftBox!.Value)
                 {
                     <div class="left-box-mobile">
                         <HeadConMenu @bind-SelectModel="@_selectModel" Balance="@_limit"></HeadConMenu>
@@ -31,9 +31,6 @@
                             <HistoryMsgList Items="@_chatInfo.HistoryMsgItem" OnRemoveItem="OnRemoveHistoryMsg" OnSelectItem="OnSelectHistoryMsg" SelectId="@_chatInfo.SelectHistoryMsgId"></HistoryMsgList>
                         </div>
                         <MDivider class="my-3"></MDivider>
-                        <MButton Depressed Rounded Text OnClick="OnRecharge">
-                            <MIcon Color="grey darken-3">mdi-lightning-bolt</MIcon>充电
-                        </MButton>
                         <MButton Depressed Rounded Text OnClick="OnSetting">
                             <MIcon Color="grey darken-3">mdi-cog</MIcon>设置
                         </MButton>
@@ -41,7 +38,7 @@
                 }
             </MNavigationDrawer>
             <div class="left-box">
-                <HeadConMenu OnNewChat="OnNewChat" OnClearChat="OnClearChat" OnSetting="OnSetting" OnRecharge="OnRecharge" @bind-SelectModel="@_selectModel" Balance="@_limit"></HeadConMenu>
+                <HeadConMenu OnNewChat="OnNewChat" OnClearChat="OnClearChat" OnSetting="OnSetting" @bind-SelectModel="@_selectModel" Balance="@_limit"></HeadConMenu>
                 <div class="msg-box">
                     <HistoryMsgList Items="@_chatInfo.HistoryMsgItem" OnRemoveItem="OnRemoveHistoryMsg" OnSelectItem="OnSelectHistoryMsg" SelectId="@_chatInfo.SelectHistoryMsgId"></HistoryMsgList>
                 </div>
@@ -75,7 +72,7 @@
 </MApp>
 
 @code {
-    private bool _drawerMobileLeftBox;
+    private bool? _drawerMobileLeftBox = false;
     private ChatMsgList _chatMsgList;
     private ChatInfo _chatInfo;
     private bool _settingShow = false;
@@ -147,27 +144,7 @@
 
     public async Task RefLimitAsync(string key)
     {
-        if (key.Length < 3 || key.Substring(0, 3) == "sk_")
-        {
-            _limit = "∞";
-            return;
-        }
-        try
-        {
-            var h = new HttpClientWrapper();
-            h.AddDefaultRequestHeader("Authorization", $"Bearer {key}");
-            var ret = await h.GetAsync($"{_serviceAddress}/user/info");
-            if (ret == null)
-                return;
-            var jsonRet = JsonSerializer.Deserialize<DataInfo<UserInfo>>(ret);
-            if (jsonRet == null || jsonRet.Data == null)
-                return;
-            _limit = jsonRet.Data.Limit.ToString();
-        }
-        catch (Exception)
-        {
-            _limit = "x";
-        }
+        _limit = "∞";
     }
 
     public async Task OnSettingSave()
@@ -199,35 +176,13 @@
         //_settingShow = true;
         var confirmed = (await PopupService.PromptAsync(
             "Key",
-            "请输入OpenAI的APIKEY或充电Key"
+            "请输入OpenAI的APIKEY"
         ))?.Trim();
         if (!string.IsNullOrWhiteSpace(confirmed)){
             _chatInfo.OpenAIApiKey = confirmed;
             await RefLimitAsync(confirmed);
         }
         await _chatInfo.SaveAsync();
-    }
-
-    public async Task OnRecharge()
-    {
-        var key = _chatInfo.OpenAIApiKey;
-        if (key.Length < 3 || key.Substring(0, 3) == "sk_")
-        {
-            await PopupService.ConfirmAsync("无法充电", "此Key不支持充电哟！", AlertTypes.Warning);
-            return;
-        }
-        var confirmed = (await PopupService.PromptAsync(
-            "充电",
-            "请放入电池"
-        ))?.Trim();
-        if (!string.IsNullOrWhiteSpace(confirmed))
-        {
-            var h = new HttpClientWrapper();
-            h.AddDefaultRequestHeader("Authorization", $"Bearer {key}");
-            var ret = await h.GetAsync($"{_serviceAddress}/user/recharge?battery={confirmed}");
-            await RefLimitAsync(key);
-            await PopupService.ConfirmAsync("充电完成", "已经充电完成了哟！", AlertTypes.Success);
-        }
     }
 
     public async Task OnRemoveHistoryMsg(HistoryMsgItem item)
